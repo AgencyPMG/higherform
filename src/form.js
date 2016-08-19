@@ -2,7 +2,7 @@
  * A higher order form component that handles syncing the state of a form
  * as well as validation, etc.
  *
- * @module higherforms
+ * @module higherform
  */
 
 import React, { Component, createElement } from 'react';
@@ -13,39 +13,28 @@ function displayNameFor(WrappedComponent) {
     return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 }
 
+/**
+ * Used by the higher order `Form` component to validate fields.
+ */
 class ValidationContext {
     constructor() {
-        this.errors = {};
+        this.errors = [];
     }
 
-    addViolation(path, message) {
-        if (!this.errors[path]) {
-            this.errors[path] = [];
-        }
-        this.errors[path].push(message);
+    addViolation(message) {
+        this.errors.push(message);
     }
 
     hasErrors() {
-        return Object.keys(this.errors).length > 0;
+        return this.errors.length > 0;
     }
 }
+
 
 /**
  * This is the default specification for a form.
  */
-const DefaultSpec = {
-    /**
-     * Validates the form data.
-     * 
-     * @param {object} formData the data from the form.
-     * @param {ValidationContext} ctx A validation context interface used to
-     *        add validation violations.
-     * @return void
-     */
-    validate: function (formData, ctx) {
-        // noop
-    },
-
+const DefaultFormSpec = {
     /**
      * Called on component creation to map the initial props to the form
      * values.
@@ -54,7 +43,7 @@ const DefaultSpec = {
      * @return {object|undefined} Return an object of {fieldName: value} pairs.
      *         May return a falsey value to decline doing anything
      */
-    propsToData: function (props) {
+    propsToForm: function (props) {
         return {};
     },
 
@@ -70,127 +59,129 @@ const DefaultSpec = {
      * @return {object|undefined} A new set of form data or a falsey value to
      *         decline doing an update.
      */
-    nextPropsToData: function (props, nextProps) {
+    nextPropsToForm: function (props, nextProps) {
         // noop
-    }
+    },
 }
 
 /**
  * Ensure the spec from the user has the required methods.
  */
 function createValidSpec(userSpec) {
-    return Object.assign({}, DefaultSpec, userSpec);
+    return Object.assign({}, DefaultFormSpec, userSpec);
+}
+
+function isPlainObject(check) {
+    return typeof check === 'object' && !!check;
+}
+
+function filterFormFromProps(formData, fields) {
+    invariant(isPlainObject(formData), 'propsToForm and nextPropsToForm must return plain objects');
+    let nf = {};
+    for (let field in fields) {
+        nf[field] = fields[field].filterInput(formData[field] || '');
+    }
+
+    return nf;
 }
 
 /**
  * Creates a higher order component that decorates a form.
  *
- * @param {array} fields An array of string field names the form will track
- * @param {func|object|undefined} spec The form lifecycle spec. This includes
+ * @param {object|function} fieldSpec An array of string field names the form will track
+ * @param {object|undefined} formSpec The form lifecycle spec. This includes
  *        allows you to hook in and modify how the form should behave on validaiton,
  *        setting up defualt values from the props, and handing updating props.
  *        If a function is given here it will be treated as the `validate`
  *        part of the spec.
  * @return {func} A decorator function.
  */
-export default function connectForm(fields, spec) {
-    if (typeof spec === 'function') {
-        spec = {
-            validate: spec,
-        };
-    } else if (typeof spec === 'undefined') {
-        spec = {};
+export default function higherform(fieldSpec, formSpec) {
+    if (typeof formSpec === 'undefined') {
+        formSpec = {};
     }
 
-    invariant(Array.isArray(fields), 'fields must be an array of field names');
-    invariant(typeof spec === 'object' && !!spec, 'The form spec must be a plain object');
+    invariant(isPlainObject(fieldSpec) || typeof fieldSpec === 'function',  'field spec must be an object or a function');
+    invariant(isPlainObject(formSpec), 'The form spec must be a plain object');
 
-    const finalSpec = createValidSpec(spec);
+    const finalFormSpec = createValidSpec(formSpec);
 
     return function (WrappedComponent) {
 
         class Form extends Component {
             constructor(props, context) {
                 super(props, context);
-                let formData = finalSpec.propsToData(props) || {};
-                fields.forEach(field => {
-                    this[this._changeHandlerName(field)] = this._createChangeHandler(field);
-                    if (!formData[field]) {
-                        formData[field] = '';
-                    }
-                });
-
+                this.fields = undefined;
+                this._configureFields(props);
+                let formData = filterFormFromProps(finalFormSpec.propsToForm(props) || {}, this.fields);
                 this.state = {
-                    formData,
-                    errors: {},
+                    __errors: {},
+                    ...formData,
                 };
                 this.validate = this.validate.bind(this);
             }
 
             componentWillReceiveProps(nextProps) {
-                let newFormData = finalSpec.nextPropsToData(this.props, nextProps);
+                this._configureFields(nextProps);
+                let newFormData = finalFormSpec.nextPropsToForm(this.props, nextProps);
                 if (!!newFormData) {
-                    fields.forEach(f => {
-                        if (!newFormData[f]) {
-                            newFormData[f] = '';
-                        }
-                    });
                     this.setState({
-                        formData: newFormData
+                        ...filterFormFromProps(newFormData, this.fields),
                     });
                 }
             }
 
-            validate() {
-                return new Promise((resolve, reject) => {
+            /**
+             * Validate the form, and if it's good to go, call the `submit` callback
+             * with the form data object.
+             *
+             * @param {func(formData)} submit the callback to "sumbit" the form data.
+             * @return void
+             */
+            validate(submit) {
+                let toSubmit = {};
+                let errors = {};
+                let hasErrors = false;
+                for (let field in this.fields) {
                     let ctx = new ValidationContext();
-                    finalSpec.validate(this.state.formData, ctx);
-
+                    this.fields[field].validate(this.state[field], ctx);
                     if (ctx.hasErrors()) {
-                        this.setState({
-                            errors: ctx.errors,
-                        });
-                        reject(ctx.errors);
+                        hasErrors = true;
+                        errors[field] = ctx.errors;
                     } else {
-                        resolve(this.state.formData);
+                        toSubmit[field] = this.fields[field].filterOutput(this.state[field]);
                     }
-                });
-            }
+                }
 
-            _changeHandlerName(field) {
-                return field + 'Change';
-            }
-
-            _createChangeHandler(field) {
-                return event => {
-                    let value = event.target.value;
-                    this.setState(function (ns) {
-                        return {
-                            formData: Object.assign({}, ns.formData, {
-                                [field]: value,
-                            }),
-                        };
-                    });
-                };
-            }
-
-            get fields() {
-                let f = {};
-                fields.forEach(fn => {
-                    f[fn] = {
-                        name: fn,
-                        value: this.state.formData[fn],
-                        onChange: this[this._changeHandlerName(fn)],
-                    };
+                // always call `setState` here so previous errors get cleared
+                // or new errors are udpated.
+                this.setState({
+                    __errors: errors,
                 });
 
-                return f;
+                if (!hasErrors) {
+                    submit(toSubmit);
+                }
             }
 
-            get form() {
+            buildFields() {
+                let out = {};
+                for (let field in this.fields) {
+                    out[field] = this.fields[field].toProps(
+                        this,
+                        this.changeHandlers[field],
+                        this.state[field]
+                    );
+                    out[field].name = field;
+                }
+
+                return out;
+            }
+
+            buildForm() {
                 return {
                     validate: this.validate,
-                    errors: this.state.errors,
+                    errors: this.state.__errors,
                 }
             }
 
@@ -198,25 +189,43 @@ export default function connectForm(fields, spec) {
                 return this.instance;
             }
 
-            // fairly common for form elements to have a `submit` method on the
-            // wrapped instance. So provide some sugar for that.
-            submit() {
-                if (typeof this.instance.submit === 'function') {
-                    return this.instance.submit();
-                }
-
-                throw new Error('this.instance.submit is not a function');
-            }
-
             render() {
                 this.instance = createElement(WrappedComponent, {
-                    fields: this.fields,
-                    form: this.form,
+                    fields: this.buildFields(),
+                    form: this.buildForm(),
                     ref: f => this.instance = f,
                     ...this.props
                 });
 
                 return this.instance;
+            }
+
+            _configureFields(props) {
+                var nf;
+                if (typeof fieldSpec === 'function') {
+                    nf = fieldSpec(props);
+                    invariant(isPlainObject(nf), 'the fieldSpec function must return a plain object');
+                } else {
+                    nf = fieldSpec;
+                }
+
+                // if the field spec has changed, rebuild the change handlers
+                if (this.fields !== nf) {
+                    this.fields = nf;
+                    this.changeHandlers = {};
+                    for (let field in this.fields) {
+                        this.changeHandlers[field] = this._createChangeHandler(field, this.fields[field]);
+                    }
+                }
+            }
+
+            _createChangeHandler(field, spec) {
+                let updateValue = value => this.setState({[field]: value});
+                let changeHandler = spec.createChangeHandler(this, updateValue);
+
+                return event => {
+                    changeHandler(event, this.state[field]);
+                };
             }
         }
 

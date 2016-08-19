@@ -1,7 +1,7 @@
 /**
  * Values suitable for use within `propTypes` of components.
  *
- * @module higherforms
+ * @module higherform
  */
 
 import { PropTypes } from 'react';

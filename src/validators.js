@@ -2,7 +2,7 @@
  * A set of validators to use with connectForm. All the validators here
  * are meant to be used with `combineValidators.
  *
- * @module higherforms
+ * @module higherform
  */
 
 import invariant from 'invariant';
