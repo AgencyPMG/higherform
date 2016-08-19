@@ -1,12 +1,12 @@
-# Higher Forms
+# Higher Form
 
-Higher Forms is a react JS library for dealing with forms.
+A ReactJS library for dealing with forms.
 
 ## Quick Example
 
 ```js
 import React, { PropTypes, Component } form 'react';
-import higherform, { input, validators, FormShape, FieldsShape } from 'higherforms';
+import higherform, { fields, validators, FormShape, FieldsShape } from 'higherform';
 
 class MyForm extends Component {
     static propTypes = {
@@ -36,7 +36,7 @@ class MyForm extends Component {
 }
 
 const FieldSpec = {
-    name: input(validators.required('Please enter a name')),
+    name: fields.input(validators.required('Please enter a name')),
 }
 
 export default higherform(FieldSpec)(MyForm);
@@ -49,7 +49,7 @@ invoked on class construct as well as whenever new props are received.
 
 ```js
 import React, { PropTypes, Component } form 'react';
-import higherform, { select, validators, FormShape, FieldsShape } from 'higherforms';
+import higherform, { fields, validators, FormShape, FieldsShape } from 'higherform';
 
 class MyForm extends Component {
     static propTypes = {
@@ -88,7 +88,7 @@ const FieldSpec = {
 
 export default higherform(ownProps => {
     return {
-        selectField: select(validators.oneOf(ownProps.selectValues)),
+        selectField: fields.select(validators.oneOf(ownProps.selectValues)),
     };
 })(MyForm);
 ```
