@@ -1,0 +1,35 @@
+{
+    "name": "higherforms",
+    "description": "A ReactJS form library built around higher order components",
+    "main": "./lib/index.js",
+    "scripts": {
+        "test": "mocha --compilers js:babel-register --recursive --require ./test/setup.js",
+        "clean": "rimraf lib",
+        "compile": "babel src --out-dir lib",
+        "prepublish": "npm run clean && npm run compile"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/AgencyPMG/higherform"
+    },
+    "dependencies": {
+        "invariant": "~2.0",
+        "hoist-non-react-statics": "~1.0"
+    },
+    "peerDependencies": {
+        "react": "^15.0.0"
+    },
+    "devDependencies": {
+        "react": "^15.0.0",
+        "react-addons-test-utils": "^15.0.0",
+        "mocha": "^3.0.0",
+        "babel-core": "^6.13.0",
+        "babel-cli": "^6.11.0",
+        "babel-register": "^6.11.0",
+        "babel-preset-es2015": "^6.13.0",
+        "babel-preset-react": "^6.11.0",
+        "babel-preset-stage-2": "^6.13.0",
+        "babel-plugin-transform-react-display-name": "^6.8.0",
+        "rimraf": "^2.5.0"
+    }
+}
