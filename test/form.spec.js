@@ -29,7 +29,7 @@ describe('form', function () {
         onSubmit(event) {
             event.preventDefault();
 
-            this.props.form.validate(this.props.submit);
+            this.props.form.submit(this.props.submit);
         }
 
         render() {

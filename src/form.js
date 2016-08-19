@@ -118,7 +118,7 @@ export default function higherform(fieldSpec, formSpec) {
                     __errors: {},
                     ...formData,
                 };
-                this.validate = this.validate.bind(this);
+                this.submit = this.submit.bind(this);
             }
 
             componentWillReceiveProps(nextProps) {
@@ -138,7 +138,7 @@ export default function higherform(fieldSpec, formSpec) {
              * @param {func(formData)} submit the callback to "sumbit" the form data.
              * @return void
              */
-            validate(submit) {
+            submit(callback) {
                 let toSubmit = {};
                 let errors = {};
                 let hasErrors = false;
@@ -160,7 +160,7 @@ export default function higherform(fieldSpec, formSpec) {
                 });
 
                 if (!hasErrors) {
-                    submit(toSubmit);
+                    callback(toSubmit);
                 }
             }
 
@@ -180,7 +180,7 @@ export default function higherform(fieldSpec, formSpec) {
 
             buildForm() {
                 return {
-                    validate: this.validate,
+                    submit: this.submit,
                     errors: this.state.__errors,
                 }
             }

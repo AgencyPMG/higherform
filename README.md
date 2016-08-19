@@ -17,10 +17,8 @@ class MyForm extends Component {
     onSubmit(event) {
         event.preventDefault();
 
-        this.props.form.validate().then(formData => {
+        this.props.form.submit(formData => {
             // save formData somehow
-        }, err => {
-            // validation error, your form should update with error states
         });
     }
 
@@ -61,15 +59,13 @@ class MyForm extends Component {
     onSubmit(event) {
         event.preventDefault();
 
-        this.props.form.validate().then(formData => {
+        this.props.form.submit(formData => {
             // save formData somehow
-        }, err => {
-            // validation error, your form should update with error states
         });
     }
 
     render() {
-        let { form, fields, selectValues} = this.props;
+        let { form, fields, selectValues } = this.props;
 
         return (
             <form onSubmit={this.onSubmit.bind(this)}>
@@ -80,10 +76,6 @@ class MyForm extends Component {
             </form>
         );
     }
-}
-
-const FieldSpec = {
-    name: select(validators.required('Please enter a name')),
 }
 
 export default higherform(ownProps => {
