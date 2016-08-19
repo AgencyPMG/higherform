@@ -8,26 +8,10 @@
 import React, { Component, createElement } from 'react';
 import invariant from 'invariant';
 import hoistStatics from 'hoist-non-react-statics';
+import { context as validationContext } from './validators';
 
 function displayNameFor(WrappedComponent) {
     return WrappedComponent.displayName || WrappedComponent.name || 'Component';
-}
-
-/**
- * Used by the higher order `Form` component to validate fields.
- */
-class ValidationContext {
-    constructor() {
-        this.errors = [];
-    }
-
-    addViolation(message) {
-        this.errors.push(message);
-    }
-
-    hasErrors() {
-        return this.errors.length > 0;
-    }
 }
 
 
@@ -143,11 +127,11 @@ export default function higherform(fieldSpec, formSpec) {
                 let errors = {};
                 let hasErrors = false;
                 for (let field in this.fields) {
-                    let ctx = new ValidationContext();
+                    let ctx = validationContext();
                     this.fields[field].validate(this.state[field], ctx);
-                    if (ctx.hasErrors()) {
+                    if (ctx.hasViolations()) {
                         hasErrors = true;
-                        errors[field] = ctx.errors;
+                        errors[field] = ctx.getViolations();
                     } else {
                         toSubmit[field] = this.fields[field].filterOutput(this.state[field]);
                     }

@@ -7,63 +7,121 @@
 
 import invariant from 'invariant';
 
-class SubContext {
-    constructor(parent) {
-        this.parent = parent;
-        this.path = '';
-    }
+export function context() {
+    const errors = [];
 
-    atPath(path) {
-        this.path = path;
-    }
+    return {
+        addViolation: function (err) {
+            errors.push(err);
+        },
 
-    addViolation(message) {
-        this.parent.addViolation(this.path, message);
-    }
-}
+        hasViolations: function () {
+            return errors.length > 0;
+        },
 
-
-function applyValidator(value, validator, ctx) {
-    let typ = typeof validator;
-    if ('undefined' === typ) {
-        return;
-    }
-
-    if ('function' === typ) {
-        validator(value, ctx);
-    } else if (Array.isArray(validator)) {
-        validator.map(v => v(value, ctx));
-    } else {
-        throw new Error(`Validator in "combineValidators" must be functions or arrays, got "${typ}"`);
-    }
-}
-
-/**
- * Combine a set of validators into a single function.
- *
- * @param {object} validators
- * @return {function} a validator suitable for use with `connectForm`
- */
-export function combineValidators(validators) {
-    invariant(typeof validators === 'object' && !!validators, 'Validators must be a plain object');
-
-    return function (formData, parentContext) {
-        let ctx = new SubContext(parentContext);
-        Object.keys(formData).forEach(k => {
-            ctx.atPath(k);
-            applyValidator(formData[k], validators[k], ctx);
-        });
+        getViolations: function () {
+            return errors;
+        }
     };
 }
 
-export function required(message) {
+export function ensureMessage(message, defaultMessage) {
     if (!message) {
-        message = 'This field is required.';
+        message = defaultMessage;
     }
+    invariant(
+        typeof message === 'string' || typeof message === 'function',
+        'Validator messages must be strings or functions'
+    );
+
+    return message;
+}
+
+export function toViolation(message, value, ...args) {
+    return typeof message === 'function' ? message(value, ...args) : message;
+}
+
+/**
+ * Errors the field if the value is falsy (empty).
+ *
+ * @param {string|undefined} message The message to show if the validator fails
+ * @return {function}
+ */
+export function required(message) {
+    let msg = ensureMessage(message, 'This field is required.');
 
     return function (value, ctx) {
         if (!value) {
-            ctx.addViolation(message);
+            ctx.addViolation(toViolation(msg, value));
+        }
+    };
+}
+
+/**
+ * Errors the field if the value is not one of the provided values.
+ *
+ * @param {array} values The allowed values.
+ * @param {string|undefined} message the message to show if the validator fails
+ * @return {function}
+ */
+export function oneOf(values, message) {
+    invariant(Array.isArray(values), 'values must be an array');
+    let msg = ensureMessage(message, `Must be one of the following values: ${values.join(', ')}`);
+
+    return function (value, ctx) {
+        if (values.indexOf(value) === -1) {
+            ctx.addViolation(toViolation(msg, value, values));
+        }
+    };
+}
+
+/**
+ * Errors the field if the value doesn't match the pattern.
+ *
+ * @param {RegExp} pattern the pattern to check agains
+ * @param {string} message The message to show if the validator fails.
+ * @return {function}
+ */
+export function matches(pattern, message) {
+    invariant(pattern instanceof RegExp, 'pattern must be a RegExp');
+    let msg = ensureMessage(message, 'This value is not valid.');
+
+    return function (value, ctx) {
+        if (!pattern.test(value)) {
+            ctx.addViolation(toViolation(msg, value, pattern));
+        }
+    };
+}
+
+/**
+ * Applies all the validators to the value. Every validator will be applied.
+ *
+ * @param {function[]} validators The validators to apply.
+ * @return {function}
+ */
+export function chain(...validators) {
+    invariant(validators.length > 0, 'chain requires at least one validator');
+
+    return function (value, ctx) {
+        validators.forEach(v => v(value, ctx));
+    };
+}
+
+/**
+ * Like `chain`, but stops after one validator fails.
+ *
+ * @param {function[]} validators The validators to apply
+ * @return {function}
+ */
+export function shortChain(...validators) {
+    invariant(validators.length > 0, 'shortChain requires at least one validator');
+
+    return function (value, ctx) {
+        for (let v of validators) {
+            v(value, ctx);
+            if (ctx.hasViolations()) {
+                break;
+            }
         }
     };
 }
