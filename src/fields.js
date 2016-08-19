@@ -62,10 +62,21 @@ export class Field {
      * The default is to do nothing.
      *
      * @param {mixed} currentValue the current value of the field to filter
+     * @return {mixed|undefined} `undefined` indicates that the value should not
+     *         be included in the output sent to the user.
+     */
+    filterOutput(currentValue) {
+        return currentValue;
+    }
+
+    /**
+     * Filters incoming values -- like mapping props to form data.
+     *
+     * @param {mixed} inValue
      * @return {mixed}
      */
-    filter(currentValue) {
-        return currentValue;
+    filterInput(inValue) {
+        return inValue;
     }
 
     /**
@@ -121,8 +132,12 @@ export class CheckedField extends Field {
         };
     }
 
-    filter(currentValue) {
-        return currentValue.checked ? currentValue.value : false;
+    filterOutput(currentValue) {
+        return currentValue.checked ? currentValue.value : undefined;
+    }
+
+    filterInput(inValue) {
+        return {checked: !!inValue};
     }
 }
 

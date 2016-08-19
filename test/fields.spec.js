@@ -23,10 +23,16 @@ describe('fields', function () {
             assert.strictEqual(args[1], ctx);
         });
 
-        it('should not alter the currentValue on `filter`', function () {
+        it('should not alter the currentValue on `filterOutput`', function () {
             let field = new fields.Field();
 
-            assert.strictEqual(field.filter('formData'), 'formData');
+            assert.strictEqual(field.filterOutput('formData'), 'formData');
+        });
+
+        it('should not alter the inValue on `filterInput`', function () {
+            let field = new fields.Field();
+
+            assert.strictEqual(field.filterInput('inData'), 'inData');
         });
     })
 
@@ -82,6 +88,23 @@ describe('fields', function () {
                 checked,
                 onClick
             });
+        });
+
+        it('should return the currentValue.value when the input is checked', function () {
+            assert.equal(field.filterOutput({
+                checked: true,
+                value: 'test',
+            }), 'test');
+        });
+
+        it('should return undefined when currentValue.checked is falsy', function () {
+            assert.isUndefined(field.filterOutput({
+                checked: false,
+            }));
+        });
+
+        it('should return an object with checked set to the truthiness of the input', function () {
+            assert.deepEqual(field.filterInput('testing'), {checked: true});
         });
     });
 
