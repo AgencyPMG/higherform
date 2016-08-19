@@ -21,7 +21,7 @@ export class Field {
         }
 
         invariant(
-            validators.filter(v => typeof f === 'function').length === validators.length,
+            validators.filter(v => typeof v === 'function').length === validators.length,
             'All field validators must be functions'
         );
 
@@ -49,7 +49,7 @@ export class Field {
      * @param {func(newValue)} updateValue A function that takes the new value for the field
      * @return {func(event, currentValue)}
      */
-    eventHandler(form, updateValue) {
+    createChangeHandler(form, updateValue) {
         return (event, currentValue) => { };
     }
 
@@ -94,7 +94,7 @@ export class SimpleField extends Field {
         };
     }
 
-    eventHandler(form, updateValue) {
+    createChangeHandler(form, updateValue) {
         return event => {
             updateValue(event.target.value);
         };
@@ -104,15 +104,15 @@ export class SimpleField extends Field {
 /**
  * A field object suitable for use with checkboxes and radio buttons.
  */
-export default class Checked extends Field {
+export class CheckedField extends Field {
     toProps(form, changeHandler, currentValue) {
         return {
             checked: !!currentValue.checked,
-            onChange: changeHandler,
+            onClick: changeHandler,
         };
     }
 
-    eventHandler(form, updateValue) {
+    createChangeHandler(form, updateValue) {
         return (event, currentValue) => {
             updateValue({
                 checked: !currentValue.checked,
@@ -122,6 +122,6 @@ export default class Checked extends Field {
     }
 
     filter(currentValue) {
-        return currentValue.value;
+        return currentValue.checked ? currentValue.value : false;
     }
 }
