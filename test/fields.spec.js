@@ -97,6 +97,13 @@ describe('fields', function () {
             }), 'test');
         });
 
+        it('should return true when the currentValue.value is falsy and the input is checked', function () {
+            assert.isTrue(field.filterOutput({
+                checked: true,
+                value: '',
+            }));
+        });
+
         it('should return undefined when currentValue.checked is falsy', function () {
             assert.isUndefined(field.filterOutput({
                 checked: false,
@@ -105,6 +112,22 @@ describe('fields', function () {
 
         it('should return an object with checked set to the truthiness of the input', function () {
             assert.deepEqual(field.filterInput('testing'), {checked: true});
+        });
+
+        it('should execute the validators on the currentValue.value', function () {
+            let args = null;
+            let validator = (...called) => args = called;
+            let ctx = {addViolation: () => {}};
+            let field = new fields.CheckedField(validator);
+
+            field.validate({
+                checked: true,
+                value: 'test',
+            }, ctx);
+
+            assert.isNotNull(args);
+            assert.equal(args[0], 'test');
+            assert.strictEqual(args[1], ctx);
         });
     });
 

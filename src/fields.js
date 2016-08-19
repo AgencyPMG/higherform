@@ -5,7 +5,7 @@
  * higherforms doesn't care about that. Our goal is only to manage state and
  * validation.
  * 
- * @module higherforms
+ * @module higherform
  */
 
 import invariant from 'invariant';
@@ -82,13 +82,12 @@ export class Field {
     /**
      * Validate the input for the field.
      *
-     * @param {string|object} formData the value from the form to validate
+     * @param {string|object} currentValue the value from the form to validate
      * @param {object} ctx The validation context.
-     * @param {string} fieldName the field that's currently being validated
      * @return {void}
      */
-    validate(formData, ctx) {
-        this.validators.forEach(v => v(formData, ctx));
+    validate(currentValue, ctx) {
+        this.validators.forEach(v => v(currentValue, ctx));
     }
 }
 
@@ -133,11 +132,15 @@ export class CheckedField extends Field {
     }
 
     filterOutput(currentValue) {
-        return currentValue.checked ? currentValue.value : undefined;
+        return currentValue.checked ? (currentValue.value || currentValue.checked) : undefined;
     }
 
     filterInput(inValue) {
         return {checked: !!inValue};
+    }
+
+    validate(currentValue, ctx) {
+        super.validate(this.filterOutput(currentValue), ctx);
     }
 }
 
