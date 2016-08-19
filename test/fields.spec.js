@@ -1,4 +1,4 @@
-import * as fields from '../src/fields';
+import { fields } from '../src';
 
 describe('fields', function () {
     describe('#Field', function () {
@@ -81,6 +81,24 @@ describe('fields', function () {
             assert.deepEqual(props, {
                 checked,
                 onClick
+            });
+        });
+    });
+
+    const simpleSugar = ['input', 'select', 'textarea'];
+    simpleSugar.forEach(name => {
+        describe('#'+name, function () {
+            it('should return an instance of SimpleField', function () {
+                assert.instanceOf(fields[name](), fields.SimpleField);
+            });
+        });
+    });
+
+    const checkedSugar = ['checkbox', 'radio'];
+    checkedSugar.forEach(name => {
+        describe('#'+name, function () {
+            it('should return an instance of CheckedField', function () {
+                assert.instanceOf(fields[name](), fields.CheckedField);
             });
         });
     });

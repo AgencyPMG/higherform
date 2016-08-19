@@ -125,3 +125,17 @@ export class CheckedField extends Field {
         return currentValue.checked ? currentValue.value : false;
     }
 }
+
+function sf(validators) {
+    return new SimpleField(validators);
+}
+
+function cf(validators) {
+    return new CheckedField();
+}
+
+export const input = sf;
+export const textarea = sf;
+export const select = sf;
+export const checkbox = cf;
+export const radio = cf;
