@@ -34,10 +34,12 @@ export class Field {
      * @param {Component} form The form component that wraps the value
      * @param {func} changeHandler The change handler 
      * @param {mixed} currentValue the current value of the field
-     * @return {object}
+     * @return {function} A function that can be called to render the props for the fields.
      */
     toProps(form, changeHandler, currentValue) {
-        return {};
+        return () => {
+            return {};
+        };
     }
 
     /**
@@ -97,10 +99,12 @@ export class Field {
  * check boxes
  */
 export class SimpleField extends Field {
-    toProps(form, changeHandler, formData) {
-        return {
-            value: formData,
-            onChange: changeHandler,
+    toProps(form, changeHandler, currentValue) {
+        return () => {
+            return {
+                value: currentValue,
+                onChange: changeHandler,
+            };
         };
     }
 
@@ -112,13 +116,15 @@ export class SimpleField extends Field {
 }
 
 /**
- * A field object suitable for use with checkboxes and radio buttons.
+ * A field object suitable for use with checkboxes.
  */
-export class CheckedField extends Field {
+export class Checkbox extends Field {
     toProps(form, changeHandler, currentValue) {
-        return {
-            checked: !!currentValue.checked,
-            onClick: changeHandler,
+        return () => {
+            return {
+                checked: !!currentValue.checked,
+                onClick: changeHandler,
+            };
         };
     }
 
@@ -136,7 +142,10 @@ export class CheckedField extends Field {
     }
 
     filterInput(inValue) {
-        return {checked: !!inValue};
+        return {
+            checked: !!inValue,
+            value: inValue,
+        };
     }
 
     validate(currentValue, ctx) {
@@ -144,16 +153,33 @@ export class CheckedField extends Field {
     }
 }
 
-function sf(validators) {
-    return new SimpleField(validators);
+/**
+ * A field suitable for radio buttons.
+ */
+export class Radio extends SimpleField {
+    toProps(form, changeHandler, currentValue) {
+        return fieldValue => {
+            invariant(typeof fieldValue !== 'undefined', 'You must supply a field value to radio field toProps');
+
+            return {
+                checked: fieldValue === currentValue,
+                onClick: changeHandler,
+                value: fieldValue,
+            };
+        };
+    }
 }
 
-function cf(validators) {
-    return new CheckedField();
+function sf(validators) {
+    return new SimpleField(validators);
 }
 
 export const input = sf;
 export const textarea = sf;
 export const select = sf;
-export const checkbox = cf;
-export const radio = cf;
+export const checkbox = function (validators) {
+    return new Checkbox(validators);
+};
+export const radio = function (validators) {
+    return new Radio(validators);
+};

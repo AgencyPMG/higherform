@@ -11,10 +11,6 @@ export const FormShape = PropTypes.shape({
     errors: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)),
 });
 
-export const FieldShape = PropTypes.shape({
-    name: PropTypes.string,
-    value: PropTypes.string,
-    onChange: PropTypes.func,
-});
+export const FieldShape = PropTypes.func;
 
 export const FieldsShape = PropTypes.objectOf(FieldShape);

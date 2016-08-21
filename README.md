@@ -29,7 +29,7 @@ class MyForm extends Component {
 
         return (
             <form onSubmit={this.onSubmit.bind(this)}>
-                <input type="text" {..fields.name} />
+                <input type="text" {..fields.name()} />
             </form>
         );
     }
@@ -71,7 +71,7 @@ class MyForm extends Component {
 
         return (
             <form onSubmit={this.onSubmit.bind(this)}>
-                <select {...fields.selectField}>
+                <select {...fields.selectField()}>
                     <option value="">Select a Value</option>
                     {selectValues.map((v, key) => <option key={key} value={v}>{v}</option>)}
                 </select>
@@ -85,6 +85,36 @@ export default higherform(ownProps => {
         selectField: fields.select(validators.oneOf(ownProps.selectValues)),
     };
 })(MyForm);
+```
+
+## Working with Radio Buttons
+
+The `fields` prop passed to your form component is an object of functions. Radio
+button fields require that you pass the value of the radio field. This helps
+higherform track whether or not the radio input should be checked.
+
+```js
+import React, { Component } from 'react';
+import higherform, { fields } from 'higherform';
+
+class FormWithRadio extends Component {
+    render() {
+        return (
+            let { fields } = this.props;
+            <form>
+                <input type="radio" {...fields.radioField('one')} />
+                // render <input type="radio" value="one" onClick={...} checked={"one" === HigherForm.state.radioField} />
+                <input type="radio" {...fields.radioField('two')} />
+                <input type="radio" {...fields.radioField('three')} />
+            </form>
+        );
+    }
+}
+
+export default higherform({
+    radioField: fields.radio(),
+})(FormWithRadio);
+
 ```
 
 ## Setting Initial Values on the Form

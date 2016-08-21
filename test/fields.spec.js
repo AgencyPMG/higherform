@@ -53,7 +53,7 @@ describe('fields', function () {
             let onChange = () => {};
             let value = 'test';
 
-            let props = field.toProps({}, onChange, value);
+            let props = field.toProps({}, onChange, value)();
 
             assert.deepEqual(props, {
                 value,
@@ -62,8 +62,8 @@ describe('fields', function () {
         });
     });
 
-    describe('#CheckedField', function () {
-        let field = new fields.CheckedField();
+    describe('#Checkbox', function () {
+        let field = new fields.Checkbox();
 
         it('should return a change handler that sets checked and the target value', function () {
             let value = null;
@@ -82,7 +82,7 @@ describe('fields', function () {
             let checked = true;
             let onClick = () => { };
 
-            let props = field.toProps({}, onClick, {checked});
+            let props = field.toProps({}, onClick, {checked})();
 
             assert.deepEqual(props, {
                 checked,
@@ -111,14 +111,17 @@ describe('fields', function () {
         });
 
         it('should return an object with checked set to the truthiness of the input', function () {
-            assert.deepEqual(field.filterInput('testing'), {checked: true});
+            assert.deepEqual(field.filterInput('testing'), {
+                checked: true,
+                value: 'testing',
+            });
         });
 
         it('should execute the validators on the currentValue.value', function () {
             let args = null;
             let validator = (...called) => args = called;
             let ctx = {addViolation: () => {}};
-            let field = new fields.CheckedField(validator);
+            let field = new fields.Checkbox(validator);
 
             field.validate({
                 checked: true,
@@ -131,6 +134,21 @@ describe('fields', function () {
         });
     });
 
+    describe('#Radio', function () {
+        let field = new fields.Radio();
+
+        it('should return props with checked set to whether or not the current value is equal to the field', function () {
+            let onClick = () => {};
+            let props = field.toProps({}, onClick, 'test')('test');
+
+            assert.deepEqual(props, {
+                checked: true,
+                value: 'test',
+                onClick,
+            });
+        });
+    });
+
     const simpleSugar = ['input', 'select', 'textarea'];
     simpleSugar.forEach(name => {
         describe('#'+name, function () {
@@ -140,12 +158,15 @@ describe('fields', function () {
         });
     });
 
-    const checkedSugar = ['checkbox', 'radio'];
-    checkedSugar.forEach(name => {
-        describe('#'+name, function () {
-            it('should return an instance of CheckedField', function () {
-                assert.instanceOf(fields[name](), fields.CheckedField);
-            });
+    describe('#checkbox', function () {
+        it('should return an instance of Checkbox', function () {
+            assert.instanceOf(fields.checkbox(), fields.Checkbox);
+        });
+    });
+
+    describe('#radio', function () {
+        it('should return an instance of Radio', function () {
+            assert.instanceOf(fields.radio(), fields.Radio);
         });
     });
 });

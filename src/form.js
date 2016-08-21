@@ -151,12 +151,7 @@ export default function higherform(fieldSpec, formSpec) {
             buildFields() {
                 let out = {};
                 for (let field in this.fields) {
-                    out[field] = this.fields[field].toProps(
-                        this,
-                        this.changeHandlers[field],
-                        this.state[field]
-                    );
-                    out[field].name = field;
+                    out[field] = this._buildFieldProps(field);
                 }
 
                 return out;
@@ -182,6 +177,19 @@ export default function higherform(fieldSpec, formSpec) {
                 });
 
                 return this.instance;
+            }
+
+            _buildFieldProps(field) {
+                return (...args) => {
+                    let props = this.fields[field].toProps(
+                        this,
+                        this.changeHandlers[field],
+                        this.state[field]
+                    )(...args);
+                    props.name = field;
+
+                    return props;
+                };
             }
 
             _configureFields(props) {
