@@ -92,7 +92,7 @@ export default function higherform(fieldSpec, formSpec) {
 
     return function (WrappedComponent) {
 
-        class Form extends Component {
+        class HigherForm extends Component {
             constructor(props, context) {
                 super(props, context);
                 this.fields = undefined;
@@ -221,9 +221,9 @@ export default function higherform(fieldSpec, formSpec) {
             }
         }
 
-        Form.displayName = `Form(${displayNameFor(WrappedComponent)})`;
-        Form.WrappedComponent = WrappedComponent;
+        HigherForm.displayName = `HigherForm(${displayNameFor(WrappedComponent)})`;
+        HigherForm.WrappedComponent = WrappedComponent;
 
-        return hoistStatics(Form, WrappedComponent);
+        return hoistStatics(HigherForm, WrappedComponent);
     };
 }
