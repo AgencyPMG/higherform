@@ -79,42 +79,42 @@ describe('fields', function () {
         });
 
         describe('#toProps', function () {
-            it('should return a set of props with checked and onClick', function () {
+            it('should return a set of props with checked and onChange', function () {
                 let checked = true;
-                let onClick = () => { };
+                let onChange = () => { };
 
-                let props = field.toProps({}, onClick, {checked})();
+                let props = field.toProps({}, onChange, {checked})();
 
                 assert.deepEqual(props, {
                     checked,
-                    onClick,
+                    onChange,
                     value: '1',
                 });
             });
 
             it('should return the correct props event when the currentValue is undefined (@regression)', function () {
                 let checked = false;
-                let onClick = () => { };
+                let onChange = () => { };
 
-                let props = field.toProps({}, onClick)();
+                let props = field.toProps({}, onChange)();
 
                 assert.deepEqual(props, {
                     checked,
-                    onClick,
+                    onChange,
                     value: '1',
                 });
             });
 
             it('should return props will the value from the call when provided', function () {
                 let checked = false;
-                let onClick = () => { };
+                let onChange = () => { };
                 let value = 'yep';
 
-                let props = field.toProps({}, onClick)(value);
+                let props = field.toProps({}, onChange)(value);
 
                 assert.deepEqual(props, {
                     checked,
-                    onClick,
+                    onChange,
                     value,
                 });
             });
@@ -193,13 +193,13 @@ describe('fields', function () {
         let field = new fields.Radio();
 
         it('should return props with checked set to whether or not the current value is equal to the field', function () {
-            let onClick = () => {};
-            let props = field.toProps({}, onClick, 'test')('test');
+            let onChange = () => {};
+            let props = field.toProps({}, onChange, 'test')('test');
 
             assert.deepEqual(props, {
                 checked: true,
                 value: 'test',
-                onClick,
+                onChange,
             });
         });
     });

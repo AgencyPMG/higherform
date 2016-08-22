@@ -124,7 +124,7 @@ export class Checkbox extends Field {
             let cv = this.filterInput(currentValue);
             return {
                 checked: !!cv.checked,
-                onClick: changeHandler,
+                onChange: changeHandler,
                 value: typeof value === 'undefined' ? cv.value : value,
             };
         };
@@ -178,7 +178,7 @@ export class Radio extends SimpleField {
 
             return {
                 checked: fieldValue === currentValue,
-                onClick: changeHandler,
+                onChange: changeHandler,
                 value: fieldValue,
             };
         };

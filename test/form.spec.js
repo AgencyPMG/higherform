@@ -131,7 +131,7 @@ describe('form', function () {
 
             changeInput(tree, {
                 target: {value: ''},
-            }, 'click');
+            });
             submitForm(tree);
 
             assert.lengthOf(args, 1, 'should have invoked the FieldSpec function once');
