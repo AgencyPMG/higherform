@@ -2,7 +2,7 @@
     "name": "higherform",
     "description": "A ReactJS form library built around higher order components",
     "main": "./lib/index.js",
-    "version": "0.1",
+    "version": "0.1.0",
     "scripts": {
         "test": "mocha --compilers js:babel-register --recursive --require ./test/setup.js",
         "clean": "rimraf lib",
