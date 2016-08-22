@@ -78,42 +78,67 @@ describe('fields', function () {
             });
         });
 
-        it('should return a set of props with checked and onClick', function () {
-            let checked = true;
-            let onClick = () => { };
+        describe('#toProps', function () {
+            it('should return a set of props with checked and onClick', function () {
+                let checked = true;
+                let onClick = () => { };
 
-            let props = field.toProps({}, onClick, {checked})();
+                let props = field.toProps({}, onClick, {checked})();
 
-            assert.deepEqual(props, {
-                checked,
-                onClick
+                assert.deepEqual(props, {
+                    checked,
+                    onClick,
+                    value: '1',
+                });
+            });
+
+            it('should return the correct props event when the currentValue is undefined (@regression)', function () {
+                let checked = false;
+                let onClick = () => { };
+
+                let props = field.toProps({}, onClick)();
+
+                assert.deepEqual(props, {
+                    checked,
+                    onClick,
+                    value: '1',
+                });
+            });
+
+            it('should return props will the value from the call when provided', function () {
+                let checked = false;
+                let onClick = () => { };
+                let value = 'yep';
+
+                let props = field.toProps({}, onClick)(value);
+
+                assert.deepEqual(props, {
+                    checked,
+                    onClick,
+                    value,
+                });
             });
         });
 
-        it('should return the currentValue.value when the input is checked', function () {
-            assert.equal(field.filterOutput({
-                checked: true,
-                value: 'test',
-            }), 'test');
-        });
+        describe('#filterOutput', function () {
+            it('should return the currentValue.value when the input is checked', function () {
+                assert.equal(field.filterOutput({
+                    checked: true,
+                    value: 'test',
+                }), 'test');
+            });
 
-        it('should return true when the currentValue.value is falsy and the input is checked', function () {
-            assert.isTrue(field.filterOutput({
-                checked: true,
-                value: '',
-            }));
-        });
+            it('should return true when the currentValue.value is falsy and the input is checked', function () {
+                assert.isTrue(field.filterOutput({
+                    checked: true,
+                    value: '',
+                }));
+            });
 
-        it('should return undefined when currentValue.checked is falsy', function () {
-            assert.isUndefined(field.filterOutput({
-                checked: false,
-            }));
-        });
-
-        it('should return an object with checked set to the truthiness of the input', function () {
-            assert.deepEqual(field.filterInput('testing'), {
-                checked: true,
-                value: 'testing',
+            it('should return undefined when currentValue.checked is falsy', function () {
+                assert.isUndefined(field.filterOutput({
+                    checked: false,
+                }));
             });
         });
 
@@ -131,6 +156,36 @@ describe('fields', function () {
             assert.isNotNull(args);
             assert.equal(args[0], 'test');
             assert.strictEqual(args[1], ctx);
+        });
+
+        describe('#filterInput', function () {
+            it('should return an object with checked set to the truthiness of the input', function () {
+                assert.deepEqual(field.filterInput('testing'), {
+                    checked: true,
+                    value: 'testing',
+                });
+            });
+
+            it('should return an object with both checked and value set when given a undefined (@regression)', function () {
+                assert.deepEqual(field.filterInput(), {
+                    checked: false,
+                    value: '1',
+                });
+            });
+
+            it('should return an object with the same properties and values as give (@regression)', function () {
+                let orig = {
+                    checked: true,
+                    value: 'testing123',
+                };
+                let nv = field.filterInput(orig);
+
+                assert.deepEqual(nv, {
+                    checked: true,
+                    value: 'testing123',
+                });
+                assert.notStrictEqual(nv, orig);
+            });
         });
     });
 
