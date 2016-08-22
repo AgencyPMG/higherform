@@ -29,7 +29,7 @@ class MyForm extends Component {
 
         return (
             <form onSubmit={this.onSubmit.bind(this)}>
-                <input type="text" {..fields.name()} />
+                <input type="text" {...fields.name()} />
             </form>
         );
     }
