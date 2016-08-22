@@ -120,18 +120,21 @@ export class SimpleField extends Field {
  */
 export class Checkbox extends Field {
     toProps(form, changeHandler, currentValue) {
-        return () => {
+        return (value) => {
+            let cv = this.filterInput(currentValue);
             return {
-                checked: !!currentValue.checked,
+                checked: !!cv.checked,
                 onClick: changeHandler,
+                value: typeof value === 'undefined' ? cv.value : value,
             };
         };
     }
 
     createChangeHandler(form, updateValue) {
         return (event, currentValue) => {
+            let cv = this.filterInput(currentValue);
             updateValue({
-                checked: !currentValue.checked,
+                checked: !cv.checked,
                 value: event.target.value, // store the value of the field
             });
         };
@@ -142,10 +145,22 @@ export class Checkbox extends Field {
     }
 
     filterInput(inValue) {
-        return {
+        let iv = typeof inValue === 'object' && !!inValue ? Object.assign({}, inValue) : {
             checked: !!inValue,
             value: inValue,
         };
+
+        if (typeof iv.checked === 'undefined') {
+            iv.checked = false;
+        }
+        if (typeof iv.value === 'undefined') {
+            // default the value to a bool-ish thing. Required so we don't
+            // cause fun warnings about the input becoming controlled/uncontrolled
+            // when form types switch.
+            iv.value = '1';
+        }
+
+        return iv;
     }
 
     validate(currentValue, ctx) {
