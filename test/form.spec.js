@@ -167,6 +167,42 @@ describe('form', function () {
             assert.isNotNull(submitted, 'form should have submitted');
             assert.deepEqual(submitted, {example: 'testing123'});
         });
+
+        it('should update the fields state in via filterInput when the form fields change (@regression)', function () {
+            const calls = [];
+            class TrackingField extends fields.SimpleField {
+                filterInput(value) {
+                    calls.push(value);
+                    return value;
+                }
+            };
+            const Form = higherform(props => {
+                return {
+                    example: 'checkbox' === props.fieldType ? fields.checkbox() : new TrackingField()
+                };
+            })(BasicForm);
+
+            class Factory extends Component {
+                constructor(props) {
+                    super(props);
+                    this.state = {
+                        fieldType: 'checkbox',
+                    }
+                }
+
+                render() {
+                    return <Form fieldType={this.state.fieldType} submit={submit} />
+                }
+            }
+            const tree = TestUtils.renderIntoDocument(<Factory />);
+            changeInput(tree, {
+                target: {value: 'testing123'},
+            });
+            // trigger a `componentWillReceiveProps`
+            tree.setState({fieldType: 'input'});
+
+            assert.lengthOf(calls, 1, 'Should have called filterInput on the updated field');
+        });
     });
 
     describe('#FormSpec', function () {

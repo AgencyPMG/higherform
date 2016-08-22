@@ -59,7 +59,7 @@ function isPlainObject(check) {
     return typeof check === 'object' && !!check;
 }
 
-function filterFormFromProps(formData, fields) {
+function filterFormData(formData, fields) {
     invariant(isPlainObject(formData), 'propsToForm and nextPropsToForm must return plain objects');
     let nf = {};
     for (let field in fields) {
@@ -97,7 +97,7 @@ export default function higherform(fieldSpec, formSpec) {
                 super(props, context);
                 this.fields = undefined;
                 this._configureFields(props);
-                let formData = filterFormFromProps(finalFormSpec.propsToForm(props) || {}, this.fields);
+                let formData = filterFormData(finalFormSpec.propsToForm(props) || {}, this.fields);
                 this.state = {
                     __errors: {},
                     ...formData,
@@ -106,12 +106,14 @@ export default function higherform(fieldSpec, formSpec) {
             }
 
             componentWillReceiveProps(nextProps) {
-                this._configureFields(nextProps);
+                let fieldsChanged = this._configureFields(nextProps);
                 let newFormData = finalFormSpec.nextPropsToForm(this.props, nextProps);
                 if (!!newFormData) {
-                    this.setState({
-                        ...filterFormFromProps(newFormData, this.fields),
-                    });
+                    this.setState(filterFormData(newFormData, this.fields));
+                } else if (fieldsChanged) {
+                    // if the fields updated, we need to ensure the state that's
+                    // tracked by this class is up to date with the fields
+                    this.setState(filterFormData(this.state, this.fields));
                 }
             }
 
@@ -202,13 +204,17 @@ export default function higherform(fieldSpec, formSpec) {
                 }
 
                 // if the field spec has changed, rebuild the change handlers
+                let updated = false;
                 if (this.fields !== nf) {
                     this.fields = nf;
+                    updated = true;
                     this.changeHandlers = {};
                     for (let field in this.fields) {
                         this.changeHandlers[field] = this._createChangeHandler(field, this.fields[field]);
                     }
                 }
+
+                return updated;
             }
 
             _createChangeHandler(field, spec) {
