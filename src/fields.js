@@ -31,12 +31,12 @@ export class Field {
     /**
      * Returns a plain object of props for the field.
      *
-     * @param {Component} form The form component that wraps the value
+     * @param {string} name The name of the field in the form.
      * @param {func} changeHandler The change handler 
      * @param {mixed} currentValue the current value of the field
      * @return {function} A function that can be called to render the props for the fields.
      */
-    toProps(form, changeHandler, currentValue) {
+    toProps(name, changeHandler, currentValue) {
         return () => {
             return {};
         };
@@ -47,11 +47,11 @@ export class Field {
      * this works will depend on the the field. Checkboxes will be different
      * from text inputs, for instance.
      *
-     * @param {Component} form The react component
+     * @param {string} name The name of the field in the form
      * @param {func(newValue)} updateValue A function that takes the new value for the field
      * @return {func(event, currentValue)}
      */
-    createChangeHandler(form, updateValue) {
+    createChangeHandler(name, updateValue) {
         return (event, currentValue) => { };
     }
 
@@ -99,16 +99,17 @@ export class Field {
  * check boxes
  */
 export class SimpleField extends Field {
-    toProps(form, changeHandler, currentValue) {
+    toProps(name, changeHandler, currentValue) {
         return () => {
             return {
                 value: currentValue,
                 onChange: changeHandler,
+                name,
             };
         };
     }
 
-    createChangeHandler(form, updateValue) {
+    createChangeHandler(name, updateValue) {
         return event => {
             updateValue(event.target.value);
         };
@@ -119,18 +120,19 @@ export class SimpleField extends Field {
  * A field object suitable for use with checkboxes.
  */
 export class Checkbox extends Field {
-    toProps(form, changeHandler, currentValue) {
+    toProps(name, changeHandler, currentValue) {
         return (value) => {
             let cv = this.filterInput(currentValue);
             return {
                 checked: !!cv.checked,
                 onChange: changeHandler,
                 value: typeof value === 'undefined' ? cv.value : value,
+                name,
             };
         };
     }
 
-    createChangeHandler(form, updateValue) {
+    createChangeHandler(name, updateValue) {
         return (event, currentValue) => {
             let cv = this.filterInput(currentValue);
             updateValue({
@@ -172,7 +174,7 @@ export class Checkbox extends Field {
  * A field suitable for radio buttons.
  */
 export class Radio extends SimpleField {
-    toProps(form, changeHandler, currentValue) {
+    toProps(name, changeHandler, currentValue) {
         return fieldValue => {
             invariant(typeof fieldValue !== 'undefined', 'You must supply a field value to radio field toProps');
 
@@ -180,6 +182,7 @@ export class Radio extends SimpleField {
                 checked: fieldValue === currentValue,
                 onChange: changeHandler,
                 value: fieldValue,
+                name,
             };
         };
     }

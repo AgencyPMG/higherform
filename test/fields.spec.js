@@ -1,6 +1,8 @@
 import { fields } from '../src';
 
 describe('fields', function () {
+    const name = 'example';
+
     describe('#Field', function () {
         it('should error when given validators that are not functions', function () {
             assert.throws(() => {
@@ -42,7 +44,7 @@ describe('fields', function () {
         it('returns a change handler that updates the form will a value from the event', function () {
             let value = null;
             let updateValue = v => value = v;
-            let onChange = field.createChangeHandler({}, updateValue);
+            let onChange = field.createChangeHandler(name, updateValue);
 
             onChange({target: {value: 'test'}}, value);
 
@@ -53,11 +55,12 @@ describe('fields', function () {
             let onChange = () => {};
             let value = 'test';
 
-            let props = field.toProps({}, onChange, value)();
+            let props = field.toProps(name, onChange, value)();
 
             assert.deepEqual(props, {
                 value,
                 onChange,
+                name,
             });
         });
     });
@@ -68,7 +71,7 @@ describe('fields', function () {
         it('should return a change handler that sets checked and the target value', function () {
             let value = null;
             let updateValue = v => value = v;
-            let onChange = field.createChangeHandler({}, updateValue);
+            let onChange = field.createChangeHandler(name, updateValue);
 
             onChange({target: {value: 'test'}}, {});
 
@@ -83,12 +86,13 @@ describe('fields', function () {
                 let checked = true;
                 let onChange = () => { };
 
-                let props = field.toProps({}, onChange, {checked})();
+                let props = field.toProps(name, onChange, {checked})();
 
                 assert.deepEqual(props, {
                     checked,
                     onChange,
                     value: '1',
+                    name,
                 });
             });
 
@@ -96,12 +100,13 @@ describe('fields', function () {
                 let checked = false;
                 let onChange = () => { };
 
-                let props = field.toProps({}, onChange)();
+                let props = field.toProps(name, onChange)();
 
                 assert.deepEqual(props, {
                     checked,
                     onChange,
                     value: '1',
+                    name,
                 });
             });
 
@@ -110,12 +115,13 @@ describe('fields', function () {
                 let onChange = () => { };
                 let value = 'yep';
 
-                let props = field.toProps({}, onChange)(value);
+                let props = field.toProps(name, onChange)(value);
 
                 assert.deepEqual(props, {
                     checked,
                     onChange,
                     value,
+                    name,
                 });
             });
         });
@@ -194,12 +200,13 @@ describe('fields', function () {
 
         it('should return props with checked set to whether or not the current value is equal to the field', function () {
             let onChange = () => {};
-            let props = field.toProps({}, onChange, 'test')('test');
+            let props = field.toProps(name, onChange, 'test')('test');
 
             assert.deepEqual(props, {
                 checked: true,
                 value: 'test',
                 onChange,
+                name,
             });
         });
     });
