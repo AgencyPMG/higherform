@@ -182,16 +182,11 @@ export default function higherform(fieldSpec, formSpec) {
             }
 
             _buildFieldProps(field) {
-                return (...args) => {
-                    let props = this.fields[field].toProps(
-                        this,
-                        this.changeHandlers[field],
-                        this.state[field]
-                    )(...args);
-                    props.name = field;
-
-                    return props;
-                };
+                return this.fields[field].toProps(
+                    field,
+                    this.changeHandlers[field],
+                    this.state[field],
+                );
             }
 
             _configureFields(props) {
