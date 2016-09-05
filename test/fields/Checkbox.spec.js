@@ -7,7 +7,7 @@ describe('fields/Checkbox', function () {
     describe('#createChangeHandler', function () {
         it('should return a change handler that sets checked and the target value', function () {
             let value = null;
-            let updateValue = v => value = v;
+            let updateValue = v => value = v({checked: false, value: '1'});
             let onChange = field.createChangeHandler(name, updateValue);
 
             onChange({target: {value: 'test'}}, {});

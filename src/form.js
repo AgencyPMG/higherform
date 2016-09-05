@@ -213,12 +213,15 @@ export default function higherform(fieldSpec, formSpec) {
             }
 
             _createChangeHandler(field, spec) {
-                let updateValue = value => this.setState({[field]: value});
-                let changeHandler = spec.createChangeHandler(this, updateValue);
+                return spec.createChangeHandler(field, value => {
+                    if (typeof value !== 'function') {
+                        return this.setState({[field]: value});
+                    }
 
-                return event => {
-                    changeHandler(event, this.state[field]);
-                };
+                    return this.setState(function (nextState) {
+                        return {[field]: value(nextState[field])};
+                    });
+                });
             }
         }
 

@@ -41,11 +41,13 @@ export default class Field {
      * from text inputs, for instance.
      *
      * @param {string} name The name of the field in the form
-     * @param {func(newValue)} updateValue A function that takes the new value for the field
-     * @return {func(event, currentValue)}
+     * @param {func(newValue)} updateValue A function that takes the new value
+     *        for the field. Should you need to see the previous value for the
+     *        field, pass a function to `updateValue`.
+     * @return {func(event)}
      */
     createChangeHandler(name, updateValue) {
-        return (event, currentValue) => { };
+        return (event) => { };
     }
 
     /**
