@@ -7,8 +7,8 @@ describe('fields/Checkbox', function () {
     describe('#createChangeHandler', function () {
         it('should return a change handler that sets checked and the target value', function () {
             let value = null;
-            let updateValue = v => value = v;
-            let onChange = field.createChangeHandler(name, updateValue);
+            let updateValue = v => value = v({checked: false, value: '1'});
+            let onChange = field._createChangeHandler(updateValue);
 
             onChange({target: {value: 'test'}}, {});
 
@@ -20,47 +20,50 @@ describe('fields/Checkbox', function () {
     });
 
     describe('#toProps', function () {
+        function assertExpectedProps(props) {
+            assert.property(props, 'name');
+            assert.equal(props.name, name);
+            assert.property(props, 'onChange');
+            assert.typeOf(props.onChange, 'function');
+        }
+
         it('should return a set of props with checked and onChange', function () {
             let checked = true;
-            let onChange = () => { };
+            let updateValue = () => { };
 
-            let props = field.toProps(name, onChange, {checked})();
+            let props = field.toProps(name, updateValue, {checked})();
 
-            assert.deepEqual(props, {
-                checked,
-                onChange,
-                value: '1',
-                name,
-            });
+            assertExpectedProps(props);
+            assert.property(props, 'value');
+            assert.equal(props.value, '1');
+            assert.property(props, 'checked');
+            assert.isTrue(props.checked);
         });
 
         it('should return the correct props event when the currentValue is undefined (@regression)', function () {
-            let checked = false;
-            let onChange = () => { };
+            let updateValue = () => { };
 
-            let props = field.toProps(name, onChange)();
+            let props = field.toProps(name, updateValue)();
 
-            assert.deepEqual(props, {
-                checked,
-                onChange,
-                value: '1',
-                name,
-            });
+            assertExpectedProps(props);
+            assert.property(props, 'value');
+            assert.equal(props.value, '1');
+            assert.property(props, 'checked');
+            assert.isFalse(props.checked);
         });
 
         it('should return props will the value from the call when provided', function () {
             let checked = false;
-            let onChange = () => { };
+            let updateValue = () => { };
             let value = 'yep';
 
-            let props = field.toProps(name, onChange)(value);
+            let props = field.toProps(name, updateValue)(value);
 
-            assert.deepEqual(props, {
-                checked,
-                onChange,
-                value,
-                name,
-            });
+            assertExpectedProps(props);
+            assert.property(props, 'value');
+            assert.equal(props.value, 'yep');
+            assert.property(props, 'checked');
+            assert.isFalse(props.checked);
         });
     });
 

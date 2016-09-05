@@ -6,15 +6,19 @@ describe('fields/Radio', function () {
 
     describe('#toProps', function () {
         it('should return props with checked set to whether or not the current value is equal to the field', function () {
-            let onChange = () => {};
-            let props = field.toProps(name, onChange, 'test')('test');
+            let updateValue = () => { }
 
-            assert.deepEqual(props, {
-                checked: true,
-                value: 'test',
-                onChange,
-                name,
-            });
+            let props = field.toProps(name, updateValue, 'test')('test');
+
+            assert.property(props, 'checked');
+            assert.isTrue(props.checked);
+            assert.property(props, 'value');
+            assert.equal(props.value, 'test');
+            assert.property(props, 'name');
+            assert.equal(props.name, name);
+            // the actual on change handler is tested in the `Field` base class
+            assert.property(props, 'onChange');
+            assert.typeOf(props.onChange, 'function');
         });
     });
 });

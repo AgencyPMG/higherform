@@ -170,7 +170,7 @@ describe('form', function () {
 
         it('should update the fields state in via filterInput when the form fields change (@regression)', function () {
             const calls = [];
-            class TrackingField extends fields.SimpleField {
+            class TrackingField extends fields.Field {
                 filterInput(value) {
                     calls.push(value);
                     return value;
