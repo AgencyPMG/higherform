@@ -182,11 +182,15 @@ export default function higherform(fieldSpec, formSpec) {
             }
 
             _buildFieldProps(field) {
-                return this.fields[field].toProps(
-                    field,
-                    this.changeHandlers[field],
-                    this.state[field],
-                );
+                return this.fields[field].toProps(field, value => {
+                    if (typeof value !== 'function') {
+                        return this.setState({[field]: value});
+                    }
+
+                    return this.setState(function (nextState) {
+                        return {[field]: value(nextState[field])};
+                    });
+                }, this.state[field]);
             }
 
             _configureFields(props) {
@@ -198,30 +202,11 @@ export default function higherform(fieldSpec, formSpec) {
                     nf = fieldSpec;
                 }
 
-                // if the field spec has changed, rebuild the change handlers
-                let updated = false;
-                if (this.fields !== nf) {
-                    this.fields = nf;
-                    updated = true;
-                    this.changeHandlers = {};
-                    for (let field in this.fields) {
-                        this.changeHandlers[field] = this._createChangeHandler(field, this.fields[field]);
-                    }
-                }
+                let updated = this.fields !== nf;
+
+                this.fields = nf;
 
                 return updated;
-            }
-
-            _createChangeHandler(field, spec) {
-                return spec.createChangeHandler(field, value => {
-                    if (typeof value !== 'function') {
-                        return this.setState({[field]: value});
-                    }
-
-                    return this.setState(function (nextState) {
-                        return {[field]: value(nextState[field])};
-                    });
-                });
             }
         }
 

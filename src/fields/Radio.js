@@ -5,16 +5,16 @@
  */
 
 import invariant from 'invariant';
-import SimpleField from './SimpleField';
+import Field from './Field';
 
-export default class Radio extends SimpleField {
-    toProps(name, changeHandler, currentValue) {
+export default class Radio extends Field {
+    toProps(name, updateValue, currentValue) {
         return fieldValue => {
             invariant(typeof fieldValue !== 'undefined', 'You must supply a field value to radio field toProps');
 
             return {
                 checked: fieldValue === currentValue,
-                onChange: changeHandler,
+                onChange: this._createChangeHandler(updateValue),
                 value: fieldValue,
                 name,
             };

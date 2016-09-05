@@ -29,25 +29,14 @@ export default class Field {
      * @param {mixed} currentValue the current value of the field
      * @return {function} A function that can be called to render the props for the fields.
      */
-    toProps(name, changeHandler, currentValue) {
+    toProps(name, updateValue, currentValue) {
         return () => {
-            return {};
+            return {
+                name,
+                value: currentValue,
+                onChange: this._createChangeHandler(updateValue),
+            };
         };
-    }
-
-    /**
-     * Returns a function suitable for use a change event handler. How
-     * this works will depend on the the field. Checkboxes will be different
-     * from text inputs, for instance.
-     *
-     * @param {string} name The name of the field in the form
-     * @param {func(newValue)} updateValue A function that takes the new value
-     *        for the field. Should you need to see the previous value for the
-     *        field, pass a function to `updateValue`.
-     * @return {func(event)}
-     */
-    createChangeHandler(name, updateValue) {
-        return (event) => { };
     }
 
     /**
@@ -85,5 +74,22 @@ export default class Field {
      */
     validate(currentValue, ctx) {
         this.validators.forEach(v => v(currentValue, ctx));
+    }
+
+    /**
+     * Returns a function suitable for use a change event handler. How
+     * this works will depend on the the field. Checkboxes will be different
+     * from text inputs, for instance.
+     *
+     * @param {string} name The name of the field in the form
+     * @param {func(newValue)} updateValue A function that takes the new value
+     *        for the field. Should you need to see the previous value for the
+     *        field, pass a function to `updateValue`.
+     * @return {func(event)}
+     */
+    _createChangeHandler(updateValue) {
+        return event => {
+            updateValue(event.target.value);
+        };
     }
 }

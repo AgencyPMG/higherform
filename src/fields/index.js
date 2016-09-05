@@ -9,15 +9,14 @@
  */
 
 import Field from './Field';
-import SimpleField from './SimpleField';
 import Checkbox from './Checkbox';
 import Radio from './Radio';
 
 function sf(validators) {
-    return new SimpleField(validators);
+    return new Field(validators);
 }
 
-export { Field, SimpleField, Checkbox, Radio };
+export { Field, Checkbox, Radio };
 export const input = sf;
 export const textarea = sf;
 export const select = sf;

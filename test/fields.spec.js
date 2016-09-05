@@ -4,8 +4,8 @@ describe('fields', function () {
     const simpleSugar = ['input', 'select', 'textarea'];
     simpleSugar.forEach(name => {
         describe('#'+name, function () {
-            it('should return an instance of SimpleField', function () {
-                assert.instanceOf(fields[name](), fields.SimpleField);
+            it('should return an instance of Field', function () {
+                assert.instanceOf(fields[name](), fields.Field);
             });
         });
     });

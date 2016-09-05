@@ -22,15 +22,52 @@ describe('fields/Field', function () {
         assert.strictEqual(args[1], ctx);
     });
 
-    it('should not alter the currentValue on `filterOutput`', function () {
-        let field = new fields.Field();
+    describe('#filterOutput', function () {
+        it('should not alter the currentValue', function () {
+            let field = new fields.Field();
 
-        assert.strictEqual(field.filterOutput('formData'), 'formData');
+            assert.strictEqual(field.filterOutput('formData'), 'formData');
+        });
     });
 
-    it('should not alter the inValue on `filterInput`', function () {
-        let field = new fields.Field();
+    describe('#filterInput', function () {
+        it('should not alter the inValue', function () {
+            let field = new fields.Field();
 
-        assert.strictEqual(field.filterInput('inData'), 'inData');
+            assert.strictEqual(field.filterInput('inData'), 'inData');
+        });
+    });
+
+    describe('#createChangeHandler', function () {
+        const field = new fields.Field();
+
+        it('returns a change handler that updates the form will a value from the event', function () {
+            let value = null;
+            let updateValue = v => value = v;
+            let onChange = field._createChangeHandler(updateValue);
+
+            onChange({target: {value: 'test'}}, value);
+
+            assert.equal(value, 'test');
+        });
+    });
+
+    describe('#toProps', function () {
+        const field = new fields.Field();
+
+        it('returns a set of props with the value and onChange set', function () {
+            const name = 'example';
+            let value = 'test';
+            let updateValue = v => {}
+
+            let props = field.toProps(name, updateValue, value)();
+
+            assert.property(props, 'value');
+            assert.equal(props.value, 'test');
+            assert.property(props, 'onChange');
+            assert.typeOf(props.onChange, 'function');
+            assert.property(props, 'name');
+            assert.equal(props.name, name);
+        });
     });
 });
