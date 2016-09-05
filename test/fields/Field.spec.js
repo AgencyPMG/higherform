@@ -31,10 +31,21 @@ describe('fields/Field', function () {
     });
 
     describe('#filterInput', function () {
+        const field = new fields.Field();
         it('should not alter the inValue', function () {
-            let field = new fields.Field();
-
             assert.strictEqual(field.filterInput('inData'), 'inData');
+        });
+
+        it('should return an empty string when given `undefined` (@regression)', function () {
+            assert.strictEqual(field.filterInput(undefined), '');
+        });
+
+        it('should return an empty string when given `null` (@regression)', function () {
+            assert.strictEqual(field.filterInput(null), '');
+        });
+
+        it('should return an empty string when given `false` (@regression)', function () {
+            assert.strictEqual(field.filterInput(false), '');
         });
     });
 

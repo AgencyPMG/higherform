@@ -62,7 +62,7 @@ export default class Field {
      * @return {mixed}
      */
     filterInput(inValue) {
-        return inValue;
+        return inValue || '';
     }
 
     /**
