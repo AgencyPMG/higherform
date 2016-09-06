@@ -1,6 +1,17 @@
 import { validators as v } from '../src'
 
 describe('validators', function () {
+
+    describe('#stubContext', function () {
+        it('should return the the values given to it', function () {
+            let violations = ['one', 'two'];
+            let ctx = v.stubContext(true, violations);
+
+            assert.isTrue(ctx.hasViolations());
+            assert.strictEqual(ctx.getViolations(), violations);
+        });
+    });
+
     describe('#ensureMessage', function () {
         it('should error if message is not an string or function', function () {
             assert.throws(v.ensureMessage.bind(undefined, {}), 'must be strings or functions');

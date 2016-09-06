@@ -25,6 +25,28 @@ export function context() {
     };
 }
 
+/**
+ * A vaidation context implementation that only returns the values given.
+ *
+ * This is used by complex fields to do validation on their individual pieces.
+ *
+ */
+export function stubContext(hasViolations, violations) {
+    return {
+        addViolation: function () {
+            // noop, only here to conform to the interface
+        },
+
+        hasViolations: function () {
+            return hasViolations;
+        },
+
+        getViolations: function () {
+            return violations;
+        }
+    };
+}
+
 export function ensureMessage(message, defaultMessage) {
     if (!message) {
         message = defaultMessage;
