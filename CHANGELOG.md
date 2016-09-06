@@ -18,4 +18,5 @@ n/a
 
 ### Added
 
-- Collection form types
+- Collection field types
+- Shape field types
