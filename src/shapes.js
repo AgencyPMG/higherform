@@ -7,8 +7,8 @@
 import { PropTypes } from 'react';
 
 export const FormShape = PropTypes.shape({
-    validate: PropTypes.func,
-    errors: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)),
+    submit: PropTypes.func,
+    errors: PropTypes.object,
 });
 
 export const FieldShape = PropTypes.object;
