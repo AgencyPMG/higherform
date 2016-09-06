@@ -29,7 +29,7 @@ class MyForm extends Component {
 
         return (
             <form onSubmit={this.onSubmit.bind(this)}>
-                <input type="text" {...fields.name()} />
+                <input type="text" {...fields.name.props()} />
             </form>
         );
     }
@@ -71,7 +71,7 @@ class MyForm extends Component {
 
         return (
             <form onSubmit={this.onSubmit.bind(this)}>
-                <select {...fields.selectField()}>
+                <select {...fields.selectField.props()}>
                     <option value="">Select a Value</option>
                     {selectValues.map((v, key) => <option key={key} value={v}>{v}</option>)}
                 </select>
@@ -102,9 +102,9 @@ class FormWithRadio extends Component {
         return (
             let { fields } = this.props;
             <form>
-                <input type="radio" {...fields.radioField('one')} />
+                <input type="radio" {...fields.radioField.props('one')} />
                 // render <input type="radio" value="one" onClick={...} checked={"one" === HigherForm.state.radioField} />
-                <input type="radio" {...fields.radioField('two')} />
+                <input type="radio" {...fields.radioField.props('two')} />
                 <input type="radio" {...fields.radioField('three')} />
             </form>
         );
