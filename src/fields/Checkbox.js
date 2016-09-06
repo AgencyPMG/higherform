@@ -7,18 +7,6 @@
 import Field from './Field';
 
 export default class Checkbox extends Field {
-    toProps(name, updateValue, currentValue) {
-        return (value) => {
-            let cv = this.filterInput(currentValue);
-            return {
-                checked: !!cv.checked,
-                onChange: this._createChangeHandler(updateValue),
-                value: typeof value === 'undefined' ? cv.value : value,
-                name,
-            };
-        };
-    }
-
     filterOutput(currentValue) {
         return currentValue.checked ? (currentValue.value || currentValue.checked) : undefined;
     }
@@ -44,6 +32,18 @@ export default class Checkbox extends Field {
 
     validate(currentValue, ctx) {
         super.validate(this.filterOutput(currentValue), ctx);
+    }
+
+    _buildPropsMethod(name, updateValue, getValue) {
+        return (value) => {
+            let cv = this.filterInput(getValue());
+            return {
+                checked: !!cv.checked,
+                onChange: this._createChangeHandler(updateValue),
+                value: typeof value === 'undefined' ? cv.value : value,
+                name,
+            };
+        };
     }
 
     _createChangeHandler(updateValue) {

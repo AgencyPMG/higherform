@@ -37,7 +37,7 @@ describe('form', function () {
 
             return (
                 <form onSubmit={this.onSubmit.bind(this)}>
-                    <input type={this.props.fieldType === 'input' ? 'text' : this.props.fieldType} {...fields.example()} />
+                    <input type={this.props.fieldType === 'input' ? 'text' : this.props.fieldType} {...fields.example.props()} />
                     {this._errors()}
                     <button type="submit">Submit</button>
                 </form>

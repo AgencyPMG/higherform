@@ -19,7 +19,7 @@ describe('fields/Checkbox', function () {
         });
     });
 
-    describe('#toProps', function () {
+    describe('#toMethods(props)', function () {
         function assertExpectedProps(props) {
             assert.property(props, 'name');
             assert.equal(props.name, name);
@@ -27,11 +27,17 @@ describe('fields/Checkbox', function () {
             assert.typeOf(props.onChange, 'function');
         }
 
+        function buildProps(updateValue, getValue, ...args) {
+            return field.toMethods(name, updateValue, getValue).props(...args);
+        }
+
         it('should return a set of props with checked and onChange', function () {
             let checked = true;
             let updateValue = () => { };
 
-            let props = field.toProps(name, updateValue, {checked})();
+            let props = buildProps(updateValue, () => {
+                return {checked};
+            });
 
             assertExpectedProps(props);
             assert.property(props, 'value');
@@ -43,7 +49,7 @@ describe('fields/Checkbox', function () {
         it('should return the correct props event when the currentValue is undefined (@regression)', function () {
             let updateValue = () => { };
 
-            let props = field.toProps(name, updateValue)();
+            let props = buildProps(updateValue, () => {});
 
             assertExpectedProps(props);
             assert.property(props, 'value');
@@ -57,7 +63,7 @@ describe('fields/Checkbox', function () {
             let updateValue = () => { };
             let value = 'yep';
 
-            let props = field.toProps(name, updateValue)(value);
+            let props = buildProps(updateValue, () => {}, 'yep');
 
             assertExpectedProps(props);
             assert.property(props, 'value');

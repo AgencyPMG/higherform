@@ -49,29 +49,15 @@ describe('fields/Field', function () {
         });
     });
 
-    describe('#createChangeHandler', function () {
+    describe('#toMethods(props)', function () {
         const field = new fields.Field();
-
-        it('returns a change handler that updates the form will a value from the event', function () {
-            let value = null;
-            let updateValue = v => value = v;
-            let onChange = field._createChangeHandler(updateValue);
-
-            onChange({target: {value: 'test'}}, value);
-
-            assert.equal(value, 'test');
-        });
-    });
-
-    describe('#toProps', function () {
-        const field = new fields.Field();
+        const name = 'example';
 
         it('returns a set of props with the value and onChange set', function () {
-            const name = 'example';
             let value = 'test';
             let updateValue = v => {}
 
-            let props = field.toProps(name, updateValue, value)();
+            let props = field.toMethods(name, updateValue, () => value).props();
 
             assert.property(props, 'value');
             assert.equal(props.value, 'test');
@@ -79,6 +65,16 @@ describe('fields/Field', function () {
             assert.typeOf(props.onChange, 'function');
             assert.property(props, 'name');
             assert.equal(props.name, name);
+        });
+
+        it('should create a change handler that updates the form with the value from the event', function () {
+            let value = null;
+            let updateValue = v => value = v;
+            let onChange = field.toMethods(name, updateValue, () => '').props().onChange;
+
+            onChange({target: {value: 'test'}}, value);
+
+            assert.equal(value, 'test');
         });
     });
 });

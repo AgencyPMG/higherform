@@ -22,20 +22,20 @@ export default class Field {
     }
 
     /**
-     * Returns a plain object of props for the field.
+     * Returns a plain object of methods that can be used to programmatically
+     * update the field. Not useful for all fields, but complex fields may use
+     * this to provide a programmatic API (eg. collections).
      *
-     * @param {string} name The name of the field in the form.
-     * @param {func} changeHandler The change handler 
-     * @param {mixed} currentValue the current value of the field
-     * @return {function} A function that can be called to render the props for the fields.
+     * @param {string} name The name of the field in the form as a whole.
+     * @param {function(value|function)} updateValue The callback used to update
+     *        the underlying form value
+     * @param {function} getValue Get the current value of the field. Useful for
+     *        late binding the state from the form to props.
+     * @return {object}
      */
-    toProps(name, updateValue, currentValue) {
-        return () => {
-            return {
-                name,
-                value: currentValue,
-                onChange: this._createChangeHandler(updateValue),
-            };
+    toMethods(name, updateValue, getValue) {
+        return {
+            props: this._buildPropsMethod(name, updateValue, getValue),
         };
     }
 
@@ -74,6 +74,24 @@ export default class Field {
      */
     validate(currentValue, ctx) {
         this.validators.forEach(v => v(currentValue, ctx));
+    }
+
+    /**
+     * Returns a function that can build props for the fields.
+     *
+     * @param {string} name The name of the field in the form.
+     * @param {function} changeHandler The change handler 
+     * @param {function} getValue Fetch the current value of the field
+     * @return {function} A function that can be called to render the props for the fields.
+     */
+    _buildPropsMethod(name, updateValue, getValue) {
+        return () => {
+            return {
+                name,
+                value: getValue(),
+                onChange: this._createChangeHandler(updateValue),
+            };
+        };
     }
 
     /**

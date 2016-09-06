@@ -4,11 +4,11 @@ describe('fields/Radio', function () {
     const name = 'example';
     let field = new fields.Radio();
 
-    describe('#toProps', function () {
+    describe('#toMethods(props)', function () {
         it('should return props with checked set to whether or not the current value is equal to the field', function () {
             let updateValue = () => { }
 
-            let props = field.toProps(name, updateValue, 'test')('test');
+            let props = field.toMethods(name, updateValue, () => 'test').props('test');
 
             assert.property(props, 'checked');
             assert.isTrue(props.checked);

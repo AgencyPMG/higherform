@@ -8,12 +8,12 @@ import invariant from 'invariant';
 import Field from './Field';
 
 export default class Radio extends Field {
-    toProps(name, updateValue, currentValue) {
+    _buildPropsMethod(name, updateValue, getValue) {
         return fieldValue => {
             invariant(typeof fieldValue !== 'undefined', 'You must supply a field value to radio field toProps');
 
             return {
-                checked: fieldValue === currentValue,
+                checked: getValue() === fieldValue,
                 onChange: this._createChangeHandler(updateValue),
                 value: fieldValue,
                 name,
