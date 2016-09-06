@@ -1,6 +1,7 @@
 node_modules
 lib
 npm-debug.log
+build
 *.pyc
 *.swp
 *.dmg

@@ -31,7 +31,7 @@ export default class Checkbox extends Field {
     }
 
     validate(currentValue, ctx) {
-        super.validate(this.filterOutput(currentValue), ctx);
+        return super.validate(this.filterOutput(currentValue), ctx);
     }
 
     _buildPropsMethod(name, updateValue, getValue) {
@@ -48,11 +48,12 @@ export default class Checkbox extends Field {
 
     _createChangeHandler(updateValue) {
         return event => {
+            let value = event.target.value;
             updateValue(currentValue => {
                 let cv = this.filterInput(currentValue);
                 return {
                     checked: !cv.checked,
-                    value: event.target.value, // store the value of the field
+                    value, // store the value of the field
                 }
             });
         };

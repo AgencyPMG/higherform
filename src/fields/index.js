@@ -11,18 +11,26 @@
 import Field from './Field';
 import Checkbox from './Checkbox';
 import Radio from './Radio';
+import Collection from './Collection';
+import Shape from './Shape';
 
 function sf(validators) {
     return new Field(validators);
 }
 
-export { Field, Checkbox, Radio };
+export { Field, Checkbox, Radio, Collection, Shape };
 export const input = sf;
 export const textarea = sf;
 export const select = sf;
-export const checkbox = function (validators) {
+export function checkbox(validators) {
     return new Checkbox(validators);
-};
-export const radio = function (validators) {
+}
+export function radio(validators) {
     return new Radio(validators);
-};
+}
+export function collection(field) {
+    return new Collection(field);
+}
+export function shape(fields) {
+    return new Shape(fields);
+}

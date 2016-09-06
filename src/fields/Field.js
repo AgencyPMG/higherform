@@ -70,10 +70,12 @@ export default class Field {
      *
      * @param {string|object} currentValue the value from the form to validate
      * @param {object} ctx The validation context.
-     * @return {void}
+     * @return {object} A validation context.
      */
     validate(currentValue, ctx) {
         this.validators.forEach(v => v(currentValue, ctx));
+
+        return ctx;
     }
 
     /**

@@ -8,6 +8,7 @@
 import React, { Component, createElement } from 'react';
 import invariant from 'invariant';
 import hoistStatics from 'hoist-non-react-statics';
+import isPlainObject from 'lodash.isplainobject';
 import { context as validationContext } from './validators';
 
 function displayNameFor(WrappedComponent) {
@@ -55,15 +56,11 @@ function createValidSpec(userSpec) {
     return Object.assign({}, DefaultFormSpec, userSpec);
 }
 
-function isPlainObject(check) {
-    return typeof check === 'object' && !!check;
-}
-
 function filterFormData(formData, fields) {
     invariant(isPlainObject(formData), 'propsToForm and nextPropsToForm must return plain objects');
     let nf = {};
     for (let field in fields) {
-        nf[field] = fields[field].filterInput(formData[field] || '');
+        nf[field] = fields[field].filterInput(formData[field]);
     }
 
     return nf;
@@ -129,8 +126,7 @@ export default function higherform(fieldSpec, formSpec) {
                 let errors = {};
                 let hasErrors = false;
                 for (let field in this.fields) {
-                    let ctx = validationContext();
-                    this.fields[field].validate(this.state[field], ctx);
+                    let ctx = this.fields[field].validate(this.state[field], validationContext());
                     if (ctx.hasViolations()) {
                         hasErrors = true;
                         errors[field] = ctx.getViolations();
