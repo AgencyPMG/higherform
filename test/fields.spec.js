@@ -21,4 +21,10 @@ describe('fields', function () {
             assert.instanceOf(fields.radio(), fields.Radio);
         });
     });
+
+    describe('#collection', function () {
+        it('shout return an instance of Collection', function () {
+            assert.instanceOf(fields.collection(fields.input()), fields.Collection);
+        });
+    });
 });
