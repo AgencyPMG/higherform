@@ -48,11 +48,12 @@ export default class Checkbox extends Field {
 
     _createChangeHandler(updateValue) {
         return event => {
+            let value = event.target.value;
             updateValue(currentValue => {
                 let cv = this.filterInput(currentValue);
                 return {
                     checked: !cv.checked,
-                    value: event.target.value, // store the value of the field
+                    value, // store the value of the field
                 }
             });
         };
