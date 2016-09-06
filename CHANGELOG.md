@@ -3,7 +3,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 0.2 (Unreleased)
+## 0.NEXT (Unreleased)
+
+### Changed
+n/a
+
+### Fixed
+n/a
+
+### Added
+n/a
+
+## 0.2.0
 
 ### Changed
 
