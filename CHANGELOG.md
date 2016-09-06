@@ -17,5 +17,5 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 n/a
 
 ### Added
-n/a
 
+- Collection form types
