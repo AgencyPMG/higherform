@@ -62,6 +62,21 @@ describe('fields/Shape', function () {
             assert.isFalse(ctx.hasViolations());
             assert.typeOf(ctx.getViolations()[subName], 'undefined');
         });
+
+        it('should validate correctly when the nested field is complex (@regression)', function () {
+            let f = fields.shape({
+                req: fields.shape({
+                    req: fields.input(validators.required('broken')),
+                }),
+            });
+
+            let ctx = f.validate({req: {req: ''}}, validators.context());
+
+            assert.isTrue(ctx.hasViolations());
+            assert.deepEqual(ctx.getViolations(), {
+                req: {req: ['broken']},
+            });
+        });
     });
 
     describe('#toMethods', function () {

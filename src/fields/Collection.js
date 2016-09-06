@@ -81,8 +81,7 @@ export default class Collection {
         let hasViolations = false;
         let violations = new Array(formData.length);
         formData.map((fieldData, idx) => {
-            let sc = context();
-            this.field.validate(fieldData, sc);
+            let sc = this.field.validate(fieldData, context());
             if (sc.hasViolations()) {
                 hasViolations = true;
                 violations[idx] = sc.getViolations();

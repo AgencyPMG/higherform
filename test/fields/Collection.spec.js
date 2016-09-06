@@ -48,6 +48,19 @@ describe('fields/Collection', function () {
 
             assert.isFalse(ctx.hasViolations());
         });
+
+        it('should validate correctly when the nested field is complex (@regression)', function () {
+            let c = fields.collection(fields.shape({
+                req: fields.input(validators.required('broken')),
+            }));
+
+            let ctx = c.validate([{req: ''}], validators.context());
+
+            assert.isTrue(ctx.hasViolations());
+            let vios = ctx.getViolations();
+            assert.lengthOf(vios, 1);
+            assert.deepEqual(vios[0], {req: ['broken']});
+        });
     });
 
     describe('#toMethods', function () {

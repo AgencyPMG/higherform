@@ -14,6 +14,19 @@ n/a
 ### Added
 n/a
 
+## 0.2.1
+
+### Changed
+n/a
+
+### Fixed
+
+- Complex fields (collections, shapes) now actually validate the way they 
+  should when nested.
+
+### Added
+n/a
+
 ## 0.2.0
 
 ### Changed

@@ -68,9 +68,7 @@ export default class Collection {
     validate(formData, ctx) {
         let hasViolations = false;
         let violations = this._mapFields(function (field, key) {
-            let sc = context();
-
-            field.validate(formData[key], sc);
+            let sc = field.validate(formData[key], context());
             if (sc.hasViolations()) {
                 hasViolations = true;
             }
