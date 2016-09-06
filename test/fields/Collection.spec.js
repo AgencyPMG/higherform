@@ -19,6 +19,10 @@ describe('fields/Collection', function () {
             assert.lengthOf(tf.filterInputCalls, 3);
             assert.deepEqual(tf.filterInputCalls, values);
         });
+
+        it('should return an empty array when no input is given', function () {
+            assert.deepEqual(col.filterInput(), [])
+        });
     });
 
     describe('#filterOutput', function () {

@@ -26,6 +26,13 @@ describe('fields/Shape', function () {
             assert.lengthOf(tf.filterInputCalls, 1);
             assert.deepEqual(tf.filterInputCalls, ['testing 123']);
         });
+
+        it('should return an object even when no input is given', function () {
+            assert.deepEqual(shape.filterInput(), {
+                [subName]: '',
+                other: '',
+            });
+        });
     });
 
     describe('#filterOutput', function () {
