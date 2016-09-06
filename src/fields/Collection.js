@@ -69,6 +69,10 @@ export default class Collection {
     }
 
     filterInput(inValue) {
+        if (typeof inValue === 'undefined') {
+            inValue = [];
+        }
+
         invariant(Array.isArray(inValue), 'Collection inputs must be arrays');
         return inValue.map(this.field.filterInput, this.field);
     }
