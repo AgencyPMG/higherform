@@ -9,6 +9,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - [BC Break] The fields passed to user components are now object, rather than
   functions. Props for fields are accessible at `this.props.fields.fieldName.props()`.
+- [BC Break] Field implementations are now required to return a validation
+  context from their `validate` methods. Can be the context passed in or a 
+  a different instance.
 
 ### Fixed
 n/a

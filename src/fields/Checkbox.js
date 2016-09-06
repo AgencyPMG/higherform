@@ -31,7 +31,7 @@ export default class Checkbox extends Field {
     }
 
     validate(currentValue, ctx) {
-        super.validate(this.filterOutput(currentValue), ctx);
+        return super.validate(this.filterOutput(currentValue), ctx);
     }
 
     _buildPropsMethod(name, updateValue, getValue) {
