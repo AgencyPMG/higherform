@@ -60,7 +60,7 @@ function filterFormData(formData, fields) {
     invariant(isPlainObject(formData), 'propsToForm and nextPropsToForm must return plain objects');
     let nf = {};
     for (let field in fields) {
-        nf[field] = fields[field].filterInput(formData[field] || '');
+        nf[field] = fields[field].filterInput(formData[field]);
     }
 
     return nf;
