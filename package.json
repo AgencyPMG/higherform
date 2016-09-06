@@ -16,7 +16,8 @@
     },
     "dependencies": {
         "invariant": "~2.0",
-        "hoist-non-react-statics": "~1.0"
+        "hoist-non-react-statics": "~1.0",
+        "lodash.isplainobject": "~4.0"
     },
     "peerDependencies": {
         "react": "^15.0.0"

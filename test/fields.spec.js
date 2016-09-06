@@ -27,4 +27,10 @@ describe('fields', function () {
             assert.instanceOf(fields.collection(fields.input()), fields.Collection);
         });
     });
+
+    describe('#shape', function () {
+        it('should return an instance of Shape', function () {
+            assert.instanceOf(fields.shape({one: fields.input()}), fields.Shape);
+        });
+    });
 });

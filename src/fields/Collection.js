@@ -1,5 +1,5 @@
 /**
- * A field object for checkboxes.
+ * A field object for collections.
  *
  * @module higherform
  */

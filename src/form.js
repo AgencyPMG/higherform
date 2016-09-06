@@ -8,6 +8,7 @@
 import React, { Component, createElement } from 'react';
 import invariant from 'invariant';
 import hoistStatics from 'hoist-non-react-statics';
+import isPlainObject from 'lodash.isplainobject';
 import { context as validationContext } from './validators';
 
 function displayNameFor(WrappedComponent) {
@@ -53,10 +54,6 @@ const DefaultFormSpec = {
  */
 function createValidSpec(userSpec) {
     return Object.assign({}, DefaultFormSpec, userSpec);
-}
-
-function isPlainObject(check) {
-    return typeof check === 'object' && !!check;
 }
 
 function filterFormData(formData, fields) {
