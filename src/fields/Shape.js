@@ -54,6 +54,10 @@ export default class Collection {
     }
 
     filterInput(inValue) {
+        if (typeof inValue === 'undefined') {
+            inValue = {};
+        }
+
         invariant(isPlainObject(inValue), 'Shape inputs must be objects');
 
         return this._mapFields(function (field, key) {
@@ -71,7 +75,7 @@ export default class Collection {
                 hasViolations = true;
             }
 
-            return sc.getViolations();
+            return sc.hasViolations () ? sc.getViolations() : undefined;
         });
 
         return stubContext(hasViolations, violations);

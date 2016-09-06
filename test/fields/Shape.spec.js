@@ -53,6 +53,7 @@ describe('fields/Shape', function () {
             let ctx = shape.validate(values);
 
             assert.isFalse(ctx.hasViolations());
+            assert.typeOf(ctx.getViolations()[subName], 'undefined');
         });
     });
 
