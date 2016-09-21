@@ -52,6 +52,17 @@ export default class Collection {
                     return out;
                 });
             },
+
+            map: callback => {
+                invariant(typeof callback === 'function', 'Collection.map callbacks must be functions');
+                let out = [];
+                let len = getValue().length;
+                for (let i = 0; i < len; i++) {
+                    out.push(callback(methodsFor(i), i))
+                }
+
+                return out;
+            },
         };
 
         for (let m of Object.keys(this.field.toMethods(name, updateValue, getValue))) {

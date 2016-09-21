@@ -140,5 +140,19 @@ describe('fields/Collection', function () {
                 assert.deepEqual(nv, ['one', 'three']);
             });
         });
+
+        describe('#map', function () {
+            it('should call the provided callback for each item in the collection', function () {
+                let result = buildMethods().map((field, index) => {
+                    return {
+                        field,
+                        index,
+                    };
+                });
+
+                assert.lengthOf(result, 3);
+                assert.lengthOf(tf.toMethodsCalls, 4, 'should have made three calls for the map, 1 for collection field toMethods');
+            });
+        });
     });
 });
