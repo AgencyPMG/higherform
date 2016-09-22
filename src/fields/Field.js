@@ -35,6 +35,7 @@ export default class Field {
      */
     toMethods(name, updateValue, getValue) {
         return {
+            setValue: value => updateValue(this.filterInput(value)),
             props: this._buildPropsMethod(name, updateValue, getValue),
         };
     }

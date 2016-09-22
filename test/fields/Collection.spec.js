@@ -154,5 +154,23 @@ describe('fields/Collection', function () {
                 assert.lengthOf(tf.toMethodsCalls, 4, 'should have made three calls for the map, 1 for collection field toMethods');
             });
         });
+
+        describe('#setValue', function () {
+            it('should set the input to an empty array when the value is undefined', function () {
+                buildMethods().setValue(void 0);
+
+                assert.lengthOf(updatedValues, 1, 'should have updated the values once');
+                assert.deepEqual([], updatedValues[0]);
+            });
+
+            it('should set the input to the value provided', function () {
+                buildMethods().setValue(['one']);
+
+                assert.lengthOf(updatedValues, 1, 'should have updated the values once');
+                assert.deepEqual(['one'], updatedValues[0]);
+                assert.lengthOf(tf.filterInputCalls, 1);
+                assert.equal('one', tf.filterInputCalls[0]);
+            });
+        })
     });
 });
