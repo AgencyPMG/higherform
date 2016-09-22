@@ -41,6 +41,8 @@ export default class Collection {
                 return methodsFor(field).props(...args);
             },
 
+            setValue: value => updateValue(this.filterInput(value)),
+
             methodsFor: methodsFor,
         };
     }

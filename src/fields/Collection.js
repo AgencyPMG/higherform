@@ -63,6 +63,8 @@ export default class Collection {
 
                 return out;
             },
+
+            setValue: value => updateValue(this.filterInput(value)),
         };
 
         for (let m of Object.keys(this.field.toMethods(name, updateValue, getValue))) {

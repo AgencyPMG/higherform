@@ -115,5 +115,19 @@ describe('fields/Shape', function () {
                 assert.deepEqual(updatedValues[0](values), Object.assign({}, values, {[subName]: 'changed'}));
             });
         });
+
+        describe('#setValue', function () {
+            it('should proxy to the update value callback after filtering the input', function () {
+                buildMethods().setValue({
+                    [subName]: 'changed',
+                });
+
+                assert.lengthOf(updatedValues, 1);
+                assert.deepEqual([{
+                    [subName]: 'changed',
+                    other: '',
+                }], updatedValues);
+            });
+        });
     });
 });

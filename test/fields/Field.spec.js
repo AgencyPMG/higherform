@@ -77,4 +77,27 @@ describe('fields/Field', function () {
             assert.equal(value, 'test');
         });
     });
+
+    describe('#toMethods(setValue)', function () {
+        const field = new fields.Field();
+        const name = 'example';
+
+        it('should update the value via the updateValue callback', function () {
+            let value = 'initial';
+            let updateValue = v => value = v;
+
+            field.toMethods(name, updateValue, () => value).setValue('changed');
+
+            assert.equal(value, 'changed');
+        });
+
+        it('should set the value to an empty string when its empty', function () {
+            let value = 'initial';
+            let updateValue = v => value = v;
+
+            field.toMethods(name, updateValue, () => value).setValue(null);
+
+            assert.equal(value, '');
+        });
+    });
 });
