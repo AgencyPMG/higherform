@@ -141,6 +141,14 @@ export default function higherform(fieldSpec, formSpec) {
                     __errors: errors,
                 });
 
+                // if the callback has two or more parameters, then assume
+                // it is the normal JS error callback. so call it appropriately
+                // with errors.
+                if (callback.length >= 2) {
+                    callback(hasErrors ? errors : void 0, hasErrors ? void 0 : toSubmit);
+                    return;
+                }
+
                 if (!hasErrors) {
                     callback(toSubmit);
                 }

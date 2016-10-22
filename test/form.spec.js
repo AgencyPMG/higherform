@@ -82,6 +82,43 @@ describe('form', function () {
             assert.deepEqual(submitted, {example: 'changed'});
         });
 
+        it('should call the submit callback with errors and undefined if length 2 or more', function (done) {
+            const submit = function(errors, formData) {
+                assert.deepEqual(errors, {example: ['oops']});
+                assert.isUndefined(formData);
+                done();
+            };
+
+            const FieldSpec = {
+                example: fields.input(function(_, ctx) {
+                    ctx.addViolation('oops');
+                }),
+            };
+            const Form = higherform(FieldSpec)(BasicForm);
+            const tree = TestUtils.renderIntoDocument(<Form submit={submit} />);
+
+            submitForm(tree);
+        });
+
+        it('should call the submit callback with undefined and formData if length 2 or more', function (done) {
+            const submit = function(errors, formData) {
+                assert.isUndefined(errors);
+                assert.deepEqual(formData, {example: 'changed'});
+                done();
+            };
+
+            const FieldSpec = {
+                example: fields.input(),
+            };
+            const Form = higherform(FieldSpec)(BasicForm);
+            const tree = TestUtils.renderIntoDocument(<Form submit={submit} />);
+
+            changeInput(tree, {
+                target: {value: 'changed'},
+            });
+            submitForm(tree);
+        });
+
         it('should update the view with errors when the form fails to validate', function () {
             const FieldSpec = {
                 example: fields.input(function (currentValue, ctx) {
