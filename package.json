@@ -2,7 +2,7 @@
     "name": "higherform",
     "description": "A ReactJS form library built around higher order components",
     "main": "./lib/index.js",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "license": "MIT",
     "scripts": {
         "test": "mocha --compilers js:babel-register --recursive --require ./test/setup.js",
