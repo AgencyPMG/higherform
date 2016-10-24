@@ -118,8 +118,8 @@ export default function higherform(fieldSpec, formSpec) {
              * Validate the form, and if it's good to go, call the `submit` callback
              * with the form data object.
              *
-             * @param {func(formData)} submit the callback to "sumbit" the form data.
-             * @return void
+             * @param {func(errors, formData)} submit the callback to "sumbit" the form data.
+             * @return a Promise that resolves with formData and rejects with errors.
              */
             submit(callback) {
                 let toSubmit = {};
@@ -141,17 +141,14 @@ export default function higherform(fieldSpec, formSpec) {
                     __errors: errors,
                 });
 
-                // if the callback has two or more parameters, then assume
-                // it is the normal JS error callback. so call it appropriately
-                // with errors.
-                if (callback.length >= 2) {
+                if (callback) {
                     callback(hasErrors ? errors : void 0, hasErrors ? void 0 : toSubmit);
-                    return;
                 }
 
-                if (!hasErrors) {
-                    callback(toSubmit);
+                if (hasErrors) {
+                    return Promise.reject(errors);
                 }
+                return Promise.resolve(toSubmit);
             }
 
             buildFields() {

@@ -59,9 +59,14 @@ describe('form', function () {
     }
 
     describe('#FieldSpec(object)', function () {
+        let errors = null;
         let submitted = null;
-        const submit = (formData) => submitted = formData;
+        const submit = (_errors, formData) => {
+            errors = _errors;
+            submitted = formData;
+        };
         beforeEach(function () {
+            errors = null;
             submitted = null;
         });
 
@@ -78,45 +83,9 @@ describe('form', function () {
             });
             submitForm(tree);
 
+            assert.isUndefined(errors);
             assert.isNotNull(submitted);
             assert.deepEqual(submitted, {example: 'changed'});
-        });
-
-        it('should call the submit callback with errors and undefined if length 2 or more', function (done) {
-            const submit = function(errors, formData) {
-                assert.deepEqual(errors, {example: ['oops']});
-                assert.isUndefined(formData);
-                done();
-            };
-
-            const FieldSpec = {
-                example: fields.input(function(_, ctx) {
-                    ctx.addViolation('oops');
-                }),
-            };
-            const Form = higherform(FieldSpec)(BasicForm);
-            const tree = TestUtils.renderIntoDocument(<Form submit={submit} />);
-
-            submitForm(tree);
-        });
-
-        it('should call the submit callback with undefined and formData if length 2 or more', function (done) {
-            const submit = function(errors, formData) {
-                assert.isUndefined(errors);
-                assert.deepEqual(formData, {example: 'changed'});
-                done();
-            };
-
-            const FieldSpec = {
-                example: fields.input(),
-            };
-            const Form = higherform(FieldSpec)(BasicForm);
-            const tree = TestUtils.renderIntoDocument(<Form submit={submit} />);
-
-            changeInput(tree, {
-                target: {value: 'changed'},
-            });
-            submitForm(tree);
         });
 
         it('should update the view with errors when the form fails to validate', function () {
@@ -133,15 +102,53 @@ describe('form', function () {
             });
             submitForm(tree);
 
-            assert.isNull(submitted);
             const errors = TestUtils.scryRenderedDOMComponentsWithClass(tree, 'error');
             assert.lengthOf(errors, 1, 'should have rendered one error');
+            assert.isUndefined(submitted);
+        });
+
+        it('should return a resolved Proimse when the form is validated', function (done) {
+            const FieldSpec = {
+                example: fields.input(),
+            };
+            const Form = higherform(FieldSpec)(BasicForm);
+            const tree = TestUtils.renderIntoDocument(<Form submit={submit} />);
+
+            changeInput(tree, {
+                target: {value: 'changed'},
+            });
+
+            TestUtils.findRenderedComponentWithType(tree, Form)
+            .submit().then(function(formData) {
+                assert.deepEqual(formData, {example: 'changed'});
+                done();
+            });
+        });
+
+        it('should return a rejected Promise when the form is not validated', function (done) {
+            const FieldSpec = {
+                example: fields.input(function (currentValue, ctx) {
+                    ctx.addViolation('oops');
+                }),
+            };
+            const Form = higherform(FieldSpec)(BasicForm);
+            const tree = TestUtils.renderIntoDocument(<Form submit={submit} />);
+
+            TestUtils.findRenderedComponentWithType(tree, Form)
+            .submit().catch(function(errors) {
+                assert.deepEqual(errors, {example: ['oops']});
+                done();
+            });
         });
     });
 
     describe('#FieldSpec(function)', function () {
+        let errors = null;
         let submitted = null;
-        const submit = (formData) => submitted = formData;
+        const submit = (_errors, formData) => {
+            errors = _errors;
+            submitted = formData;
+        };
         let args = [];
         const FieldSpec = (props) => {
             args.push(props);
@@ -159,6 +166,7 @@ describe('form', function () {
         })(BasicForm);
 
         beforeEach(function () {
+            errors = null;
             submitted = null;
             args = [];
         });
