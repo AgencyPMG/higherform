@@ -106,8 +106,8 @@ describe('form', function () {
         let submitted = null;
         const submit = (formData) => submitted = formData;
         let args = [];
-        const FieldSpec = (props) => {
-            args.push(props);
+        const FieldSpec = (props, prevFields) => {
+            args.push({props, prevFields});
             return {
                 example: fields[props.fieldType](),
             };
@@ -126,6 +126,11 @@ describe('form', function () {
             args = [];
         });
 
+        function assertExpectedArgs(args) {
+            assert.property(args, 'props', 'should have a props field');
+            assert.property(args, 'prevFields', 'should have a prevFields property');
+        }
+
         it('should invoke the function to create fields on render', function () {
             const tree = TestUtils.renderIntoDocument(<Form fieldType="checkbox" submit={submit} />);
 
@@ -135,6 +140,7 @@ describe('form', function () {
             submitForm(tree);
 
             assert.lengthOf(args, 1, 'should have invoked the FieldSpec function once');
+            assertExpectedArgs(args[0]);
             assert.isNotNull(submitted, 'form should have submitted');
             assert.deepEqual(submitted, {example: true});
         });
@@ -162,8 +168,10 @@ describe('form', function () {
             submitForm(tree);
 
             assert.lengthOf(args, 2, 'should have invoked the FieldSpec function once');
-            assert.equal(args[0].fieldType, 'checkbox');
-            assert.equal(args[1].fieldType, 'input');
+            assertExpectedArgs(args[0]);
+            assert.equal(args[0].props.fieldType, 'checkbox');
+            assertExpectedArgs(args[1]);
+            assert.equal(args[1].props.fieldType, 'input');
             assert.isNotNull(submitted, 'form should have submitted');
             assert.deepEqual(submitted, {example: 'testing123'});
         });

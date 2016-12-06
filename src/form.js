@@ -192,7 +192,7 @@ export default function higherform(fieldSpec, formSpec) {
             _configureFields(props) {
                 var nf;
                 if (typeof fieldSpec === 'function') {
-                    nf = fieldSpec(props);
+                    nf = fieldSpec(props, this.fields);
                     invariant(isPlainObject(nf), 'the fieldSpec function must return a plain object');
                 } else {
                     nf = fieldSpec;
