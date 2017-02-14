@@ -39,6 +39,7 @@ describe('form', function () {
                 <form onSubmit={this.onSubmit.bind(this)}>
                     <input type={this.props.fieldType === 'input' ? 'text' : this.props.fieldType} {...fields.example.props()} />
                     {this._errors()}
+                    {this._data()}
                     <button type="submit">Submit</button>
                 </form>
             );
@@ -53,6 +54,17 @@ describe('form', function () {
             return (
                 <div className="errors">
                     {errors.map((e, key) => <p key={key} className="error">{e}</p>)}
+                </div>
+            );
+        }
+
+        _data() {
+            let fd = this.props.form.getData()
+
+
+            return (
+                <div className="form-data">
+                    {Object.keys(fd).map((k, i) => <p key={i}>{k}: {JSON.stringify(fd[k])}</p>)}
                 </div>
             );
         }
