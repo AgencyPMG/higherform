@@ -59,7 +59,7 @@ describe('form', function () {
         }
 
         _data() {
-            let fd = this.props.form.getData()
+            let fd = this.props.form.data
 
 
             return (

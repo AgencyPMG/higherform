@@ -179,7 +179,7 @@ export default function higherform(fieldSpec, formSpec) {
                 return {
                     submit: this.submit,
                     errors: this.state.__errors,
-                    getData: this.getData,
+                    data: this.getData(),
                 }
             }
 
