@@ -1,4 +1,5 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import higherform, { fields, FormShape, FieldsShape } from '../src';
 
 describe('form', function () {
@@ -39,6 +40,7 @@ describe('form', function () {
                 <form onSubmit={this.onSubmit.bind(this)}>
                     <input type={this.props.fieldType === 'input' ? 'text' : this.props.fieldType} {...fields.example.props()} />
                     {this._errors()}
+                    {this._data()}
                     <button type="submit">Submit</button>
                 </form>
             );
@@ -53,6 +55,17 @@ describe('form', function () {
             return (
                 <div className="errors">
                     {errors.map((e, key) => <p key={key} className="error">{e}</p>)}
+                </div>
+            );
+        }
+
+        _data() {
+            let fd = this.props.form.data
+
+
+            return (
+                <div className="form-data">
+                    {Object.keys(fd).map((k, i) => <p key={i}>{k}: {JSON.stringify(fd[k])}</p>)}
                 </div>
             );
         }
@@ -106,8 +119,8 @@ describe('form', function () {
         let submitted = null;
         const submit = (formData) => submitted = formData;
         let args = [];
-        const FieldSpec = (props) => {
-            args.push(props);
+        const FieldSpec = (props, prevFields) => {
+            args.push({props, prevFields});
             return {
                 example: fields[props.fieldType](),
             };
@@ -126,6 +139,11 @@ describe('form', function () {
             args = [];
         });
 
+        function assertExpectedArgs(args) {
+            assert.property(args, 'props', 'should have a props field');
+            assert.property(args, 'prevFields', 'should have a prevFields property');
+        }
+
         it('should invoke the function to create fields on render', function () {
             const tree = TestUtils.renderIntoDocument(<Form fieldType="checkbox" submit={submit} />);
 
@@ -135,6 +153,7 @@ describe('form', function () {
             submitForm(tree);
 
             assert.lengthOf(args, 1, 'should have invoked the FieldSpec function once');
+            assertExpectedArgs(args[0]);
             assert.isNotNull(submitted, 'form should have submitted');
             assert.deepEqual(submitted, {example: true});
         });
@@ -162,8 +181,10 @@ describe('form', function () {
             submitForm(tree);
 
             assert.lengthOf(args, 2, 'should have invoked the FieldSpec function once');
-            assert.equal(args[0].fieldType, 'checkbox');
-            assert.equal(args[1].fieldType, 'input');
+            assertExpectedArgs(args[0]);
+            assert.equal(args[0].props.fieldType, 'checkbox');
+            assertExpectedArgs(args[1]);
+            assert.equal(args[1].props.fieldType, 'input');
             assert.isNotNull(submitted, 'form should have submitted');
             assert.deepEqual(submitted, {example: 'testing123'});
         });

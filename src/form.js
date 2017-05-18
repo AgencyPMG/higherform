@@ -100,6 +100,7 @@ export default function higherform(fieldSpec, formSpec) {
                     ...formData,
                 };
                 this.submit = this.submit.bind(this);
+                this.getData = this.getData.bind(this);
             }
 
             componentWillReceiveProps(nextProps) {
@@ -146,6 +147,25 @@ export default function higherform(fieldSpec, formSpec) {
                 }
             }
 
+            /**
+             * Get a snapshot of the data currently held by the form.
+             *
+             * Any field that is not set will be undefined. The data returned
+             * here is not guaranteed to be valid.
+             *
+             * @return object
+             */
+            getData() {
+                let out = {};
+                for (let f in this.fields) {
+                    out[f] = typeof this.state[f] === 'undefined'
+                        ? void 0
+                        : this.fields[f].filterOutput(this.state[f]);
+                }
+
+                return out;
+            }
+
             buildFields() {
                 let out = {};
                 for (let field in this.fields) {
@@ -159,6 +179,7 @@ export default function higherform(fieldSpec, formSpec) {
                 return {
                     submit: this.submit,
                     errors: this.state.__errors,
+                    data: this.getData(),
                 }
             }
 
@@ -192,7 +213,7 @@ export default function higherform(fieldSpec, formSpec) {
             _configureFields(props) {
                 var nf;
                 if (typeof fieldSpec === 'function') {
-                    nf = fieldSpec(props);
+                    nf = fieldSpec(props, this.fields);
                     invariant(isPlainObject(nf), 'the fieldSpec function must return a plain object');
                 } else {
                     nf = fieldSpec;

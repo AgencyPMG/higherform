@@ -4,7 +4,7 @@
  * @module higherform
  */
 
-import { PropTypes } from 'react';
+import PropTypes from 'prop-types';
 
 export const FormShape = PropTypes.shape({
     submit: PropTypes.func,
