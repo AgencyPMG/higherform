@@ -5,7 +5,7 @@ A ReactJS library for dealing with forms.
 ## Quick Example
 
 ```js
-import React, { PropTypes, Component } form 'react';
+import React, { Component } form 'react';
 import higherform, { fields, validators, FormShape, FieldsShape } from 'higherform';
 
 class MyForm extends Component {
@@ -48,7 +48,8 @@ Pass a function to `higherform` rather than a specification object. It will be
 invoked on object instantiation as well as whenever new props are received.
 
 ```js
-import React, { PropTypes, Component } form 'react';
+import React, { Component } form 'react';
+import PropTypes from 'prop-types';
 import higherform, { fields, validators, FormShape, FieldsShape } from 'higherform';
 
 class MyForm extends Component {
