@@ -7,7 +7,7 @@
 
 import invariant from 'invariant';
 
-export function context() {
+export function context(data) {
     const errors = [];
 
     return {
@@ -21,7 +21,9 @@ export function context() {
 
         getViolations: function () {
             return errors;
-        }
+        },
+
+        data,
     };
 }
 
