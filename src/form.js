@@ -127,7 +127,7 @@ export default function higherform(fieldSpec, formSpec) {
                 let errors = {};
                 let hasErrors = false;
                 for (let field in this.fields) {
-                    let ctx = this.fields[field].validate(this.state[field], validationContext());
+                    let ctx = this.fields[field].validate(this.state[field], validationContext(this.getData()));
                     if (ctx.hasViolations()) {
                         hasErrors = true;
                         errors[field] = ctx.getViolations();

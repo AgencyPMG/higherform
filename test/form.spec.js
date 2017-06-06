@@ -71,6 +71,27 @@ describe('form', function () {
         }
     }
 
+    describe('higherform', function () {
+        it('should attach form data to validation context', function () {
+            let ctxData = null;
+            const Form = higherform({
+                example: fields.input(function(value, ctx) {
+                    ctxData = ctx.data;
+                }),
+            }, {
+                propsToForm: (props) => ({ example: 'example' }),
+            })(BasicForm);
+
+            let tree = TestUtils.renderIntoDocument(<Form submit={() => false} />);
+
+            submitForm(tree);
+
+            let formData = tree.getData();
+
+            assert.deepEqual(ctxData, formData);
+        });
+    });
+
     describe('#FieldSpec(object)', function () {
         let submitted = null;
         const submit = (formData) => submitted = formData;
