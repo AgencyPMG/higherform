@@ -33,7 +33,7 @@ const DefaultFormSpec = {
     },
 
     /**
-     * Invoked by the component in `componentWillReceiveProps`. This is
+     * Invoked by the component in `componentDidUpdate`. This is
      * useful should you want to change the form values when the component
      * moves to a new entity or something.
      *
@@ -103,15 +103,18 @@ export default function higherform(fieldSpec, formSpec) {
                 this.getData = this.getData.bind(this);
             }
 
-            componentWillReceiveProps(nextProps) {
-                let fieldsChanged = this._configureFields(nextProps);
-                let newFormData = finalFormSpec.nextPropsToForm(this.props, nextProps);
-                if (!!newFormData) {
-                    this.setState(filterFormData(newFormData, this.fields));
-                } else if (fieldsChanged) {
-                    // if the fields updated, we need to ensure the state that's
-                    // tracked by this class is up to date with the fields
-                    this.setState(filterFormData(this.state, this.fields));
+            componentDidUpdate(prevProps) {
+                if (prevProps != this.props) {
+                    let fieldsChanged = this._configureFields(this.props);
+                    let newFormData = finalFormSpec.nextPropsToForm(prevProps, this.props);
+                    if (!!newFormData) {
+                        this.setState(filterFormData(newFormData, this.fields));
+                    } else if (fieldsChanged) {
+                        // if the fields updated, we need to ensure the state that's
+                        // tracked by this class is up to date with the fields
+                        this.setState(filterFormData(this.state, this.fields));
+                    }
+
                 }
             }
 

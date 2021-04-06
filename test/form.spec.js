@@ -152,6 +152,7 @@ describe('form', function () {
                 if (props.fieldType !== nextProps.fieldType) {
                     return {};
                 }
+                return {}
             },
         })(BasicForm);
 
@@ -193,7 +194,7 @@ describe('form', function () {
                 }
             }
             const tree = TestUtils.renderIntoDocument(<Factory />);
-            // trigger a `componentWillReceiveProps`
+            // trigger a `componentDidUpdate`
             tree.setState({fieldType: 'input'});
 
             changeInput(tree, {
@@ -240,7 +241,7 @@ describe('form', function () {
             changeInput(tree, {
                 target: {value: 'testing123'},
             });
-            // trigger a `componentWillReceiveProps`
+            // trigger a `componentDidUpdate`
             tree.setState({fieldType: 'input'});
 
             assert.lengthOf(calls, 1, 'Should have called filterInput on the updated field');
