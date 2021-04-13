@@ -16,29 +16,29 @@
         "url": "https://github.com/AgencyPMG/higherform"
     },
     "dependencies": {
-        "invariant": "~2.0",
         "hoist-non-react-statics": "~1.0",
+        "invariant": "~2.0",
         "lodash.isplainobject": "~4.0",
         "prop-types": "~15.5"
     },
     "peerDependencies": {
-        "react": "~16.0"
+        "react": "^16.0"
     },
     "devDependencies": {
-        "react": "~16.0",
-        "react-dom": "~16.0",
-        "mocha": "^3.0.0",
-        "chai": "^3.5.0",
-        "babel-core": "^6.13.0",
         "babel-cli": "^6.11.0",
-        "babel-register": "^6.11.0",
+        "babel-core": "^6.13.0",
+        "babel-loader": "^6.2.5",
+        "babel-plugin-transform-react-display-name": "^6.8.0",
         "babel-preset-es2015": "^6.13.0",
         "babel-preset-react": "^6.11.0",
         "babel-preset-stage-2": "^6.13.0",
-        "babel-plugin-transform-react-display-name": "^6.8.0",
-        "babel-loader": "^6.2.5",
-        "rimraf": "^2.5.0",
+        "babel-register": "^6.11.0",
+        "chai": "^3.5.0",
         "jsdom": "^9.4.0",
+        "mocha": "^3.0.0",
+        "react": "^16.0",
+        "react-dom": "^16.0",
+        "rimraf": "^2.5.0",
         "webpack": "^1.13.2",
         "webpack-dev-server": "^1.15.0"
     },
