@@ -40,7 +40,7 @@
         "react-dom": "^16.0",
         "rimraf": "^2.5.0",
         "webpack": "^1.13.2",
-        "webpack-dev-server": "^1.15.0"
+        "webpack-dev-server": "^3.1.11"
     },
     "authors": [
         "Christopher Davis <chris@pmg.com> (http://christopherdavis.me)"
