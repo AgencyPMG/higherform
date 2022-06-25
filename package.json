@@ -34,7 +34,7 @@
         "babel-preset-stage-2": "^6.13.0",
         "babel-register": "^6.11.0",
         "chai": "^3.5.0",
-        "jsdom": "^9.4.0",
+        "jsdom": "^16.5.0",
         "mocha": "^3.0.0",
         "react": "^16.0",
         "react-dom": "^16.0",
