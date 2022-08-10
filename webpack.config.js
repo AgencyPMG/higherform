@@ -1,6 +1,7 @@
 var path = require('path');
 
 module.exports = {
+    mode: 'development',
     entry: {
         examples: [
             path.join(__dirname, 'examples.js')
@@ -13,13 +14,20 @@ module.exports = {
         publicPath: '/build/',
     },
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                loader: 'babel'
+                use: [
+                    'babel-loader',
+                ],
             }
         ]
     },
-    devtool: 'source-map'
+    devtool: 'source-map',
+    devServer: {
+        static: {
+            directory: __dirname,
+        },
+    }
 }
